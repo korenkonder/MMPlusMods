@@ -1,5 +1,7 @@
 #pragma once
 
+#include "detours.h"
+
 #define _CONCAT2(x, y) x##y
 #define CONCAT2(x, y) _CONCAT(x, y)
 #define INSERT_PADDING(length) \
@@ -20,6 +22,9 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
 
 #define FUNCTION_PTR(returnType, callingConvention, function, location, ...) \
     returnType (callingConvention *function)(__VA_ARGS__) = (returnType(callingConvention*)(__VA_ARGS__))(location)
+
+#define FUNCTION_PTR_H(returnType, callingConvention, function, ...) \
+    extern returnType (callingConvention *function) (__VA_ARGS__)
 
 #define PROC_ADDRESS(libraryName, procName) \
     GetProcAddress(LoadLibrary(TEXT(libraryName)), procName)
@@ -55,6 +60,9 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
         } \
     }
 
+#define READ_MEMORY(location, type) \
+    *(type *)location
+
 #define WRITE_MEMORY(location, type, ...) \
     { \
         const type data[] = { __VA_ARGS__ }; \
@@ -63,6 +71,14 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
         memcpy((void*)(location), data, sizeof(data)); \
         VirtualProtect((void*)(location), sizeof(data), oldProtect, &oldProtect); \
     }
+
+#define WRITE_MEMORY_STRING(location, data, length) \
+	{ \
+		DWORD oldProtect; \
+		VirtualProtect ((void *)(location), length, PAGE_EXECUTE_READWRITE, &oldProtect); \
+		memcpy ((void *)(location), data, length); \
+		VirtualProtect ((void *)(location), length, oldProtect, &oldProtect); \
+	}
 
 #define WRITE_JUMP(location, function) \
     { \
@@ -84,3 +100,15 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
             *((uint8_t*)(location) + i) = 0x90; \
         VirtualProtect((void*)(location), (size_t)(count), oldProtect, &oldProtect); \
     }
+
+#define WRITE_NULL(location, count) \
+    { \
+        DWORD oldProtect; \
+        VirtualProtect((void*)(location), (size_t)(count), PAGE_EXECUTE_READWRITE, &oldProtect); \
+        for (size_t i = 0; i < (size_t)(count); i++) \
+            *((uint8_t*)(location) + i) = 0x00; \
+        VirtualProtect((void*)(location), (size_t)(count), oldProtect, &oldProtect); \
+    }
+
+#define COUNTOFARR(arr) \
+    sizeof(arr) / sizeof(arr[0])
