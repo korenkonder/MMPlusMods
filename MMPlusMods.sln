@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenLyricLimit", "src\OpenL
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PotatoMM", "src\PotatoMM\PotatoMM.vcxproj", "{A3F8F8AD-4D09-45A3-936E-43C118D1AC93}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DivaLZMA", "src\DivaLZMA\DivaLZMA.vcxproj", "{108E115A-3012-436E-8DEF-758783DF7D8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{A3F8F8AD-4D09-45A3-936E-43C118D1AC93}.Debug|x64.Build.0 = Debug|x64
 		{A3F8F8AD-4D09-45A3-936E-43C118D1AC93}.Release|x64.ActiveCfg = Release|x64
 		{A3F8F8AD-4D09-45A3-936E-43C118D1AC93}.Release|x64.Build.0 = Release|x64
+		{108E115A-3012-436E-8DEF-758783DF7D8A}.Debug|x64.ActiveCfg = Debug|x64
+		{108E115A-3012-436E-8DEF-758783DF7D8A}.Debug|x64.Build.0 = Debug|x64
+		{108E115A-3012-436E-8DEF-758783DF7D8A}.Release|x64.ActiveCfg = Release|x64
+		{108E115A-3012-436E-8DEF-758783DF7D8A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
