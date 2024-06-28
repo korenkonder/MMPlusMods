@@ -12,3 +12,6 @@ Small patch that allows 1000 lines of lyrics
 
 ## PotatoMM
 Mod for potato PC users
+
+## Sprite Draw Limit
+Breaks limit for Sprite Draw. (Prevents displaying of mess on screen if too many sprites are shown)

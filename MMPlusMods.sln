@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DivaLZMA", "src\DivaLZMA\Di
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OPDPlus", "src\OPDPlus\OPDPlus.vcxproj", "{7035BC8B-E63A-407A-B398-BD417482EA79}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpriteDrawLimit", "src\SpriteDrawLimit\SpriteDrawLimit.vcxproj", "{BE55625F-77C5-40C8-9529-3212B2ADC014}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,6 +35,10 @@ Global
 		{7035BC8B-E63A-407A-B398-BD417482EA79}.Debug|x64.Build.0 = Debug|x64
 		{7035BC8B-E63A-407A-B398-BD417482EA79}.Release|x64.ActiveCfg = Release|x64
 		{7035BC8B-E63A-407A-B398-BD417482EA79}.Release|x64.Build.0 = Release|x64
+		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Debug|x64.ActiveCfg = Debug|x64
+		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Debug|x64.Build.0 = Debug|x64
+		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Release|x64.ActiveCfg = Release|x64
+		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

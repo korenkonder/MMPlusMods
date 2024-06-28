@@ -83,13 +83,13 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
 #define WRITE_JUMP(location, function) \
     { \
         WRITE_MEMORY(location, uint8_t, 0xE9); \
-        WRITE_MEMORY(location + 1, uint32_t, (uint32_t)(function) - (size_t)(location) - 5); \
+        WRITE_MEMORY(location + 1, uint32_t, (uint32_t)(function - location - 5)); \
     }
 	
 #define WRITE_CALL(location, function) \
     { \
         WRITE_MEMORY(location, uint8_t, 0xE8); \
-        WRITE_MEMORY(location + 1, uint32_t, (uint32_t)(function) - (size_t)(location) - 5); \
+        WRITE_MEMORY(location + 1, uint32_t, (uint32_t)(function - location - 5)); \
     }
 
 #define WRITE_NOP(location, count) \
@@ -99,6 +99,61 @@ const HMODULE MODULE_HANDLE = GetModuleHandle(nullptr);
         for (size_t i = 0; i < (size_t)(count); i++) \
             *((uint8_t*)(location) + i) = 0x90; \
         VirtualProtect((void*)(location), (size_t)(count), oldProtect, &oldProtect); \
+    }
+
+#define WRITE_NOP_1(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x90); \
+    }
+
+#define WRITE_NOP_2(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x66, 0x90); \
+    }
+
+#define WRITE_NOP_3(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x0F, 0x1F, 0x00); \
+    }
+
+#define WRITE_NOP_4(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x0F, 0x1F, 0x40, 0x00); \
+    }
+
+#define WRITE_NOP_5(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x0F, 0x1F, 0x44, 0x00, 0x00); \
+    }
+
+#define WRITE_NOP_6(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x66, 0x0F, 0x1F, 0x44, 0x00, 0x00); \
+    }
+
+#define WRITE_NOP_7(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x0F, 0x1F, 0x80, 0x00, 0x00, 0x00, 0x00); \
+    }
+
+#define WRITE_NOP_8(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x0F, 0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00); \
+    }
+
+#define WRITE_NOP_9(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x66, 0x0F, 0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00); \
+    }
+
+#define WRITE_NOP_10(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x66, 0x66, 0x0F, 0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00); \
+    }
+
+#define WRITE_NOP_11(location) \
+    { \
+        WRITE_MEMORY(location, uint8_t, 0x66, 0x66, 0x66, 0x0F, 0x1F, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00); \
     }
 
 #define WRITE_NULL(location, count) \
