@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OPDPlus", "src\OPDPlus\OPDP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpriteDrawLimit", "src\SpriteDrawLimit\SpriteDrawLimit.vcxproj", "{BE55625F-77C5-40C8-9529-3212B2ADC014}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SSAAEnable", "src\SSAAEnable\SSAAEnable.vcxproj", "{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +41,10 @@ Global
 		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Debug|x64.Build.0 = Debug|x64
 		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Release|x64.ActiveCfg = Release|x64
 		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Release|x64.Build.0 = Release|x64
+		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Debug|x64.ActiveCfg = Debug|x64
+		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Debug|x64.Build.0 = Debug|x64
+		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Release|x64.ActiveCfg = Release|x64
+		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

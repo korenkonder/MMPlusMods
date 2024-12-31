@@ -15,3 +15,6 @@ Mod for potato PC users
 
 ## Sprite Draw Limit
 Breaks limit for Sprite Draw. (Prevents displaying of mess on screen if too many sprites are shown)
+
+## SSAA Enable
+Name tells it. It enables SSAA in-game. 3D stuff will be rendered at twice the native resolution.
