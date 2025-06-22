@@ -25,6 +25,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SSAAEnable", "src\SSAAEnabl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMPlusModsShared", "src\MMPlusModsShared\MMPlusModsShared.vcxproj", "{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RobTexAnim", "src\RobTexAnim\RobTexAnim.vcxproj", "{2F0A50B1-1778-419C-9F39-BB60C4B982BC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88} = {65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}
+		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3} = {03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -67,6 +73,10 @@ Global
 		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Debug|x64.Build.0 = Debug|x64
 		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Release|x64.ActiveCfg = Release|x64
 		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Release|x64.Build.0 = Release|x64
+		{2F0A50B1-1778-419C-9F39-BB60C4B982BC}.Debug|x64.ActiveCfg = Debug|x64
+		{2F0A50B1-1778-419C-9F39-BB60C4B982BC}.Debug|x64.Build.0 = Debug|x64
+		{2F0A50B1-1778-419C-9F39-BB60C4B982BC}.Release|x64.ActiveCfg = Release|x64
+		{2F0A50B1-1778-419C-9F39-BB60C4B982BC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
