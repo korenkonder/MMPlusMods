@@ -13,7 +13,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OPDPlus", "src\OPDPlus\OPDP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpriteDrawLimit", "src\SpriteDrawLimit\SpriteDrawLimit.vcxproj", "{BE55625F-77C5-40C8-9529-3212B2ADC014}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XSongPack", "src\XSongPack\XSongPack.vcxproj", "{3654AC7F-1EC0-4362-B431-82FA6447D57B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88} = {65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}
+		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3} = {03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KKdLib", "src\KKdLib\KKdLib.vcxproj", "{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SSAAEnable", "src\SSAAEnable\SSAAEnable.vcxproj", "{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMPlusModsShared", "src\MMPlusModsShared\MMPlusModsShared.vcxproj", "{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +51,22 @@ Global
 		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Debug|x64.Build.0 = Debug|x64
 		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Release|x64.ActiveCfg = Release|x64
 		{BE55625F-77C5-40C8-9529-3212B2ADC014}.Release|x64.Build.0 = Release|x64
+		{3654AC7F-1EC0-4362-B431-82FA6447D57B}.Debug|x64.ActiveCfg = Debug|x64
+		{3654AC7F-1EC0-4362-B431-82FA6447D57B}.Debug|x64.Build.0 = Debug|x64
+		{3654AC7F-1EC0-4362-B431-82FA6447D57B}.Release|x64.ActiveCfg = Release|x64
+		{3654AC7F-1EC0-4362-B431-82FA6447D57B}.Release|x64.Build.0 = Release|x64
+		{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}.Debug|x64.ActiveCfg = DebugOpt|x64
+		{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}.Debug|x64.Build.0 = DebugOpt|x64
+		{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}.Release|x64.ActiveCfg = Release|x64
+		{65707AD3-568A-4FE9-A75E-BDBF3D5EFC88}.Release|x64.Build.0 = Release|x64
 		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Debug|x64.ActiveCfg = Debug|x64
 		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Debug|x64.Build.0 = Debug|x64
 		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Release|x64.ActiveCfg = Release|x64
 		{DD90D9F3-30FB-4261-BDD0-D89A5F199E82}.Release|x64.Build.0 = Release|x64
+		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Debug|x64.ActiveCfg = Debug|x64
+		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Debug|x64.Build.0 = Debug|x64
+		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Release|x64.ActiveCfg = Release|x64
+		{03C9B2E6-E362-4AB2-B415-D20B7FFF27E3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

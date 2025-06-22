@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{3654ac7f-1ec0-4362-b431-82fa6447d57b}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>XSongPack</TargetName>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(SolutionDir)obj\debug\XSongPack\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>XSongPack</TargetName>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(SolutionDir)obj\release\XSongPack\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)extern\src</AdditionalIncludeDirectories>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <OmitFramePointers>false</OmitFramePointers>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <CallingConvention>FastCall</CallingConvention>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)</ObjectFileName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+      <UseFullPaths>false</UseFullPaths>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX64</TargetMachine>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)extern\lib;$(SolutionDir)lib\debugopt\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib;syelog.lib;libdeflatestatic.lib;KKdLib.lib;MMPlusModsShared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4098 /ignore:4099 /ignore:4286 %(AdditionalOptions)</AdditionalOptions>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)extern\src</AdditionalIncludeDirectories>
+      <ConformanceMode>true</ConformanceMode>
+      <OmitFramePointers>false</OmitFramePointers>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <CallingConvention>FastCall</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)</ObjectFileName>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeTypeInfo>
+      </RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX64</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)extern\lib;$(SolutionDir)lib\release\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib;syelog.lib;libdeflatestatic.lib;KKdLib.lib;MMPlusModsShared.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalOptions>/ignore:4098 /ignore:4099 /ignore:4286 %(AdditionalOptions)</AdditionalOptions>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="auth_3d.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="effect.cpp" />
+    <ClCompile Include="Glitter\animation.cpp" />
+    <ClCompile Include="Glitter\counter.cpp" />
+    <ClCompile Include="Glitter\curve.cpp" />
+    <ClCompile Include="Glitter\effect.cpp" />
+    <ClCompile Include="Glitter\effect_group.cpp" />
+    <ClCompile Include="Glitter\effect_inst.cpp" />
+    <ClCompile Include="Glitter\emitter.cpp" />
+    <ClCompile Include="Glitter\emitter_inst.cpp" />
+    <ClCompile Include="Glitter\file_reader.cpp" />
+    <ClCompile Include="Glitter\glitter.cpp" />
+    <ClCompile Include="Glitter\item_base.cpp" />
+    <ClCompile Include="Glitter\locus_history.cpp" />
+    <ClCompile Include="Glitter\node.cpp" />
+    <ClCompile Include="Glitter\particle.cpp" />
+    <ClCompile Include="Glitter\particle_inst.cpp" />
+    <ClCompile Include="Glitter\particle_manager.cpp" />
+    <ClCompile Include="Glitter\random.cpp" />
+    <ClCompile Include="Glitter\render_element.cpp" />
+    <ClCompile Include="Glitter\render_group.cpp" />
+    <ClCompile Include="Glitter\render_scene.cpp" />
+    <ClCompile Include="Glitter\scene.cpp" />
+    <ClCompile Include="hook.cpp" />
+    <ClCompile Include="mdl\disp_manager.cpp" />
+    <ClCompile Include="object.cpp" />
+    <ClCompile Include="pv_game\dsc.cpp" />
+    <ClCompile Include="pv_game\firstread.cpp" />
+    <ClCompile Include="pv_game\pvpp.cpp" />
+    <ClCompile Include="pv_game\pvsr.cpp" />
+    <ClCompile Include="pv_game\pv_game.cpp" />
+    <ClCompile Include="render_manager.cpp" />
+    <ClCompile Include="rob\rob.cpp" />
+    <ClCompile Include="stage.cpp" />
+    <ClCompile Include="tomlc99\toml.c" />
+    <ClCompile Include="wrap.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="XSongPack.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="auth_3d.hpp" />
+    <ClInclude Include="camera.hpp" />
+    <ClInclude Include="effect.hpp" />
+    <ClInclude Include="Glitter\glitter.hpp" />
+    <ClInclude Include="hook.hpp" />
+    <ClInclude Include="mdl\disp_manager.hpp" />
+    <ClInclude Include="object.hpp" />
+    <ClInclude Include="pv_game\dsc.hpp" />
+    <ClInclude Include="pv_game\firstread.hpp" />
+    <ClInclude Include="pv_game\pvpp.hpp" />
+    <ClInclude Include="pv_game\pvsr.hpp" />
+    <ClInclude Include="pv_game\pv_game.hpp" />
+    <ClInclude Include="render_manager.hpp" />
+    <ClInclude Include="rob\rob.hpp" />
+    <ClInclude Include="stage.hpp" />
+    <ClInclude Include="tomlc99\toml.h" />
+    <ClInclude Include="wrap.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="common.asm" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>
