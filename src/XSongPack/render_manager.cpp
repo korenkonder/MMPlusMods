@@ -33,7 +33,7 @@ struct reflect_full_struct {
     void init();
 };
 
-bool local_draw[4] = { false };
+bool screen_draw[4] = { false };
 vec4 reflect_clip_plane = 0.0f;
 bool reflect_draw[4] = { false };
 mat4 reflect_mat = mat4_identity;
@@ -48,12 +48,12 @@ static void draw_pass_sss_contour(rndr::Render* rend, render_data_context& rend_
 static void draw_pass_sss_filter(sss_data* sss, render_data_context& rend_data_ctx);
 static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::ObjType opaque,
     mdl::ObjType transparent, mdl::ObjType translucent, cam_data& cam);
-static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::ObjTypeLocal opaque,
-    mdl::ObjTypeLocal transparent, mdl::ObjTypeLocal translucent, cam_data& cam);
+static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::ObjTypeScreen opaque,
+    mdl::ObjTypeScreen transparent, mdl::ObjTypeScreen translucent, cam_data& cam);
 static int32_t draw_pass_3d_translucent_count_layers(render_data_context& rend_data_ctx, int32_t alpha_array[0x100],
     mdl::ObjType opaque, mdl::ObjType transparent, mdl::ObjType translucent, cam_data& cam);
 static int32_t draw_pass_3d_translucent_count_layers(render_data_context& rend_data_ctx, int32_t alpha_array[0x100],
-    mdl::ObjTypeLocal opaque, mdl::ObjTypeLocal transparent, mdl::ObjTypeLocal translucent, cam_data& cam);
+    mdl::ObjTypeScreen opaque, mdl::ObjTypeScreen transparent, mdl::ObjTypeScreen translucent, cam_data& cam);
 static void draw_pass_3d_translucent_has_objects(bool* arr, mdl::ObjListSort& obj_list_sort, cam_data& cam);
 
 static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::RenderManager& render_manager);
@@ -130,38 +130,38 @@ void rndr__RenderManager__pass_ss_sss_mid_impl(render_data_context& rend_data_ct
 
 void rndr__RenderManager__pass_3d__DispGlitterXScenesLocal_impl(
     render_data_context& rend_data_ctx, rndr::RenderManager& render_manager) {
-    if (Glitter::glt_particle_manager_x->CheckHasLocalEffect()) { // X
-        rend_data_ctx.state.begin_event("local");
+    if (Glitter::glt_particle_manager_x->CheckHasScreenEffect()) { // X
+        rend_data_ctx.state.begin_event("screen");
 
-        cam_data local_cam;
-        local_cam.get(32.2673416137695f);
-        rend_data_ctx.set_batch_scene_camera(local_cam);
+        cam_data screen_cam;
+        screen_cam.get(32.2673416137695f);
+        rend_data_ctx.set_batch_scene_camera(screen_cam);
 
-        local_draw[rend_data_ctx.index] = true;
+        screen_draw[rend_data_ctx.index] = true;
         if (render_manager.alpha_z_sort) {
             mdl::DispManager::obj_sort(rend_data_ctx,
-                mdl::OBJ_TYPE_LOCAL_TRANSLUCENT, 1, local_cam);
+                mdl::OBJ_TYPE_SCREEN_TRANSLUCENT, 1, screen_cam);
             mdl::DispManager::obj_sort(rend_data_ctx,
-                mdl::OBJ_TYPE_LOCAL_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, 1, local_cam);
+                mdl::OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, 1, screen_cam);
         }
 
         if (render_manager.opaque_z_sort)
-            mdl::DispManager::obj_sort(rend_data_ctx, mdl::OBJ_TYPE_LOCAL_OPAQUE, 0, local_cam);
+            mdl::DispManager::obj_sort(rend_data_ctx, mdl::OBJ_TYPE_SCREEN_OPAQUE, 0, screen_cam);
 
-        mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_LOCAL_OPAQUE, local_cam, 0, -1, true);
-        mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_LOCAL_TRANSPARENT, local_cam, 0, -1, true);
+        mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_SCREEN_OPAQUE, screen_cam, 0, -1, true);
+        mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_SCREEN_TRANSPARENT, screen_cam, 0, -1, true);
         draw_state.set_blend(rend_data_ctx, true);
-        mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_LOCAL_TRANSLUCENT, local_cam, 0, -1, true);
+        mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_SCREEN_TRANSLUCENT, screen_cam, 0, -1, true);
         draw_state.set_blend(rend_data_ctx, false);
 
         draw_pass_3d_translucent(rend_data_ctx,
-            mdl::OBJ_TYPE_LOCAL_OPAQUE_ALPHA_ORDER_POST_TRANSLUCENT,
-            mdl::OBJ_TYPE_LOCAL_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT,
-            mdl::OBJ_TYPE_LOCAL_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, local_cam);
-        local_draw[rend_data_ctx.index] = false;
+            mdl::OBJ_TYPE_SCREEN_OPAQUE_ALPHA_ORDER_POST_TRANSLUCENT,
+            mdl::OBJ_TYPE_SCREEN_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT,
+            mdl::OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, screen_cam);
+        screen_draw[rend_data_ctx.index] = false;
 
         if (render_manager.glitter)
-            Glitter::glt_particle_manager_x->DispScenes(rend_data_ctx, local_cam, Glitter::DISP_LOCAL);
+            Glitter::glt_particle_manager_x->DispScenes(rend_data_ctx, screen_cam, Glitter::DISP_SCREEN);
 
         rend_data_ctx.state.end_event();
 
@@ -641,8 +641,8 @@ static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::Ob
     }
 }
 
-static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::ObjTypeLocal opaque,
-    mdl::ObjTypeLocal transparent, mdl::ObjTypeLocal translucent, cam_data& cam) {
+static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::ObjTypeScreen opaque,
+    mdl::ObjTypeScreen transparent, mdl::ObjTypeScreen translucent, cam_data& cam) {
     if (disp_manager->get_obj_count(opaque) < 1
         && disp_manager->get_obj_count(transparent) < 1
         && disp_manager->get_obj_count(translucent) < 1)
@@ -695,7 +695,7 @@ static int32_t draw_pass_3d_translucent_count_layers(render_data_context& rend_d
 }
 
 static int32_t draw_pass_3d_translucent_count_layers(render_data_context& rend_data_ctx, int32_t alpha_array[0x100],
-    mdl::ObjTypeLocal opaque, mdl::ObjTypeLocal transparent, mdl::ObjTypeLocal translucent, cam_data& cam) {
+    mdl::ObjTypeScreen opaque, mdl::ObjTypeScreen transparent, mdl::ObjTypeScreen translucent, cam_data& cam) {
     bool arr[0x100] = { false };
 
     draw_pass_3d_translucent_has_objects(arr,

@@ -76,14 +76,14 @@ namespace mdl {
         OBJ_TYPE_MAX,
     };
 
-    enum ObjTypeLocal {
-        OBJ_TYPE_LOCAL_OPAQUE = 0,
-        OBJ_TYPE_LOCAL_TRANSLUCENT,
-        OBJ_TYPE_LOCAL_TRANSPARENT,
-        OBJ_TYPE_LOCAL_OPAQUE_ALPHA_ORDER_POST_TRANSLUCENT,
-        OBJ_TYPE_LOCAL_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT,
-        OBJ_TYPE_LOCAL_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT,
-        OBJ_TYPE_LOCAL_MAX
+    enum ObjTypeScreen {
+        OBJ_TYPE_SCREEN_OPAQUE = 0,
+        OBJ_TYPE_SCREEN_TRANSLUCENT,
+        OBJ_TYPE_SCREEN_TRANSPARENT,
+        OBJ_TYPE_SCREEN_OPAQUE_ALPHA_ORDER_POST_TRANSLUCENT,
+        OBJ_TYPE_SCREEN_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT,
+        OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT,
+        OBJ_TYPE_SCREEN_MAX
     };
 
     enum ObjTypeReflect {
@@ -431,11 +431,11 @@ namespace mdl {
         int32_t field_C78;
 
         int32_t get_obj_count(ObjType type);
-        int32_t get_obj_count(ObjTypeLocal type);
+        int32_t get_obj_count(ObjTypeScreen type);
         int32_t get_obj_count(ObjTypeReflect type);
         void set_obj_flags(ObjFlags flags);
         ObjList& get_obj_list(ObjType type);
-        ObjList& get_obj_list(ObjTypeLocal type);
+        ObjList& get_obj_list(ObjTypeScreen type);
         ObjList& get_obj_list(ObjTypeReflect type);
         void set_material_list(int32_t count = 0, const material_list_struct* value = 0);
         void set_texture_pattern(int32_t count = 0, const texture_pattern_struct* value = 0);
@@ -447,19 +447,19 @@ namespace mdl {
         static void draw(render_data_context& rend_data_ctx, ObjType type, const cam_data& cam,
             int32_t first = 0, int32_t count = -1, int32_t a6 = 0, int32_t a7 = 0,
             bool reflect_texture_mask = true, int32_t alpha = -1, bool a10 = true);
-        static void draw(render_data_context& rend_data_ctx, ObjTypeLocal type, const cam_data& cam,
+        static void draw(render_data_context& rend_data_ctx, ObjTypeScreen type, const cam_data& cam,
             int32_t first = 0, int32_t count = -1, int32_t alpha = -1, bool a10 = true);
         static void draw(render_data_context& rend_data_ctx, ObjTypeReflect type, const cam_data& cam,
             int32_t first = 0, int32_t count = -1, bool a10 = true);
         static void entry_list(ObjType type, ObjData* data);
-        static void entry_list(ObjTypeLocal type, ObjData* data);
+        static void entry_list(ObjTypeScreen type, ObjData* data);
         static void entry_list(ObjTypeReflect type, ObjData* data);
         static void entry_obj(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
             obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0,
             const mat4* bone_mat = 0, const ::obj* obj_morph = 0, obj_mesh_vertex_buffer* obj_morph_vert_buf = 0,
             float_t morph_value = 0.0f, int32_t instances_count = 0, const mat4* instances_mat = 0, int64_t a13 = 0,
             int64_t a14 = 0, draw_func func = 0, const ObjSubMeshArgs* func_data = 0, bool enable_bone_mat = false);
-        static void entry_obj_local(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
+        static void entry_obj_screen(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
             obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0);
         static void entry_obj_reflect(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
             obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0,
@@ -472,22 +472,22 @@ namespace mdl {
         static void entry_obj_by_object_info(object_info obj_info, const vec4* blend_color = 0,
             const mat4* bone_mat = 0, int32_t instances_count = 0, const mat4* instances_mat = 0,
             draw_func func = 0, const ObjSubMeshArgs* func_data = 0, bool enable_bone_mat = false);
-        static void entry_obj_by_object_info_local(object_info obj_info, const vec4* blend_color = 0,
+        static void entry_obj_by_object_info_screen(object_info obj_info, const vec4* blend_color = 0,
             const mat4* bone_mat = 0, int32_t instances_count = 0, const mat4* instances_mat = 0,
             draw_func func = 0, const ObjSubMeshArgs* func_data = 0, bool enable_bone_mat = false);
         static void entry_obj_by_object_info_cache(object_info_cache& obj_info_cache,
             const mat4& mat, const vec4* blend_color = 0, const mat4* bone_mat = 0,
             int32_t instances_count = 0, const mat4* instances_mat = 0, draw_func func = 0,
             const ObjSubMeshArgs* func_data = 0, bool enable_bone_mat = false);
-        static void entry_obj_by_object_info_cache_local(object_info_cache& obj_info_cache,
+        static void entry_obj_by_object_info_cache_screen(object_info_cache& obj_info_cache,
             const mat4& mat, const vec4* blend_color = 0);
         static ObjListSort& get_obj_data_list_sort(int32_t index, ObjType type);
-        static ObjListSort& get_obj_data_list_sort(int32_t index, ObjTypeLocal type);
+        static ObjListSort& get_obj_data_list_sort(int32_t index, ObjTypeScreen type);
         static ObjListSort& get_obj_data_list_sort(int32_t index, ObjTypeReflect type);
         static void obj_sort(render_data_context& rend_data_ctx,
             ObjType type, int32_t compare_func, const cam_data& cam, bool a5 = false);
         static void obj_sort(render_data_context& rend_data_ctx,
-            ObjTypeLocal type, int32_t compare_func, const cam_data& cam);
+            ObjTypeScreen type, int32_t compare_func, const cam_data& cam);
         static void obj_sort(render_data_context& rend_data_ctx,
             ObjTypeReflect type, int32_t compare_func, const cam_data& cam);
     };

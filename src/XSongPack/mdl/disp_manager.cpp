@@ -15,7 +15,7 @@
 mdl::DispManager*& disp_manager = *(mdl::DispManager**)0x0000000141148650;
 mdl::ObjDataListSort* obj_data_list_sort = (mdl::ObjDataListSort*)0x00000001416ED140;
 
-extern bool local_draw[4];
+extern bool screen_draw[4];
 extern bool reflect_draw[4];
 extern mat4 reflect_mat;
 
@@ -33,8 +33,8 @@ namespace mdl {
     int32_t material_list_count;
     material_list_struct material_list_array[MATERIAL_LIST_COUNT];
 
-    ObjList obj_local[OBJ_TYPE_LOCAL_MAX];
-    ObjListSort obj_list_sort_local[4][OBJ_TYPE_LOCAL_MAX];
+    ObjList obj_screen[OBJ_TYPE_SCREEN_MAX];
+    ObjListSort obj_list_sort_screen[4][OBJ_TYPE_SCREEN_MAX];
     ObjList obj_reflect[OBJ_TYPE_REFLECT_MAX];
     ObjListSort obj_list_sort_reflect[4][OBJ_TYPE_REFLECT_MAX];
 
@@ -225,7 +225,7 @@ namespace mdl {
         return get_obj_list(type).count;
     }
 
-    int32_t DispManager::get_obj_count(ObjTypeLocal type) {
+    int32_t DispManager::get_obj_count(ObjTypeScreen type) {
         return get_obj_list(type).count;
     }
 
@@ -241,8 +241,8 @@ namespace mdl {
         return obj[type];
     }
 
-    ObjList& DispManager::get_obj_list(ObjTypeLocal type) {
-        return obj_local[type];
+    ObjList& DispManager::get_obj_list(ObjTypeScreen type) {
+        return obj_screen[type];
     }
 
     ObjList& DispManager::get_obj_list(ObjTypeReflect type) {
@@ -594,7 +594,7 @@ namespace mdl {
         rend_data_ctx.uniform_value_reset();
     }
 
-    void DispManager::draw(render_data_context& rend_data_ctx, ObjTypeLocal type,
+    void DispManager::draw(render_data_context& rend_data_ctx, ObjTypeScreen type,
         const cam_data& cam, int32_t first, int32_t count, int32_t alpha, bool a10) {
         if (!disp_manager->get_obj_count(type))
             return;
@@ -620,17 +620,17 @@ namespace mdl {
 
         rend_data_ctx.uniform_value_reset();
         switch (type) {
-        case OBJ_TYPE_LOCAL_TRANSLUCENT:
+        case OBJ_TYPE_SCREEN_TRANSLUCENT:
             alpha_test = 1;
             min_alpha = 0.0f;
             depth_write = false;
             break;
-        case OBJ_TYPE_LOCAL_TRANSPARENT:
+        case OBJ_TYPE_SCREEN_TRANSPARENT:
             alpha_test = 1;
             min_alpha = 0.1f;
             alpha_threshold = 0.5f;
             break;
-        case OBJ_TYPE_LOCAL_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT:
+        case OBJ_TYPE_SCREEN_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT:
             alpha_test = 1;
             min_alpha = 0.1f;
             alpha_threshold = 0.5f;
@@ -640,7 +640,7 @@ namespace mdl {
                 rend_data_ctx.state.set_rasterizer_state(dx_default_states_get_rasterizer_state(DX_CULL_FRONT));
             }
             break;
-        case OBJ_TYPE_LOCAL_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT:
+        case OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT:
             alpha_test = 1;
             min_alpha = 0.0f;
             depth_write = false;
@@ -1464,7 +1464,7 @@ namespace mdl {
         }
     }
 
-    void DispManager::entry_obj_local(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
+    void DispManager::entry_obj_screen(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
         obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color) {
         disp_manager->culling.passed.objects++;
 
@@ -1566,7 +1566,7 @@ namespace mdl {
                             if (!attrib.translucent_priority) {
                                 if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_GLITTER);
                                 else if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_TRANSLUCENT)
-                                    entry_list(OBJ_TYPE_LOCAL_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
+                                    entry_list(OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
                                 else;
                             }
                             else if (translucent_priority_count < 40)
@@ -1576,13 +1576,13 @@ namespace mdl {
                             if (attrib.punch_through) {
                                 if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_GLITTER);
                                 else if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_TRANSLUCENT)
-                                    entry_list(OBJ_TYPE_LOCAL_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
+                                    entry_list(OBJ_TYPE_SCREEN_TRANSPARENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
                                 else;
                             }
                             else {
                                 if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_GLITTER);
                                 else if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_TRANSLUCENT)
-                                    entry_list(OBJ_TYPE_LOCAL_OPAQUE_ALPHA_ORDER_POST_TRANSLUCENT, data);
+                                    entry_list(OBJ_TYPE_SCREEN_OPAQUE_ALPHA_ORDER_POST_TRANSLUCENT, data);
                                 else;
                             }
                         }
@@ -1601,7 +1601,7 @@ namespace mdl {
                                 if (mesh->attrib.m.translucent_sort_by_radius
                                     || obj_flags & mdl::OBJ_TRANSLUCENT_SORT_BY_RADIUS);
                                 else
-                                    entry_list(OBJ_TYPE_LOCAL_TRANSLUCENT, data);
+                                    entry_list(OBJ_TYPE_SCREEN_TRANSLUCENT, data);
                             else if (translucent_priority_count < 40)
                                 disp_manager->translucent_objects[translucent_priority_count++] = data->args.sub_mesh.ptr;
                         }
@@ -1610,11 +1610,11 @@ namespace mdl {
                 else {
                     if (attrib.punch_through) {
                         if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY))
-                            entry_list(OBJ_TYPE_LOCAL_TRANSPARENT, data);
+                            entry_list(OBJ_TYPE_SCREEN_TRANSPARENT, data);
                     }
                     else {
                         if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY))
-                            entry_list(OBJ_TYPE_LOCAL_OPAQUE, data);
+                            entry_list(OBJ_TYPE_SCREEN_OPAQUE, data);
                     }
                     continue;
                 }
@@ -1640,10 +1640,10 @@ namespace mdl {
                 data->init_translucent(mat, translucent_args);
                 if (disp_manager->obj_flags & mdl::OBJ_ALPHA_ORDER_POST_GLITTER);
                 else if (disp_manager->obj_flags & mdl::OBJ_ALPHA_ORDER_POST_TRANSLUCENT)
-                    entry_list(OBJ_TYPE_LOCAL_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
+                    entry_list(OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
                 else if (disp_manager->obj_flags & mdl::OBJ_ALPHA_ORDER_POST_OPAQUE);
                 else
-                    entry_list(OBJ_TYPE_LOCAL_TRANSLUCENT, data);
+                    entry_list(OBJ_TYPE_SCREEN_TRANSLUCENT, data);
             }
         }
     }
@@ -1691,7 +1691,7 @@ namespace mdl {
             disp_manager->culling.culled.objects++;
     }
 
-    void DispManager::entry_obj_by_object_info_local(object_info obj_info, const vec4* blend_color,
+    void DispManager::entry_obj_by_object_info_screen(object_info obj_info, const vec4* blend_color,
         const mat4* bone_mat, int32_t instances_count, const mat4* instances_mat,
         draw_func func, const ObjSubMeshArgs* func_data, bool enable_bone_mat) {
         mat4 mat;
@@ -1705,7 +1705,7 @@ namespace mdl {
         if (!obj)
             return;
 
-        entry_obj_by_object_info_cache_local(obj_info_cache, mat, blend_color);
+        entry_obj_by_object_info_cache_screen(obj_info_cache, mat, blend_color);
     }
 
     void DispManager::entry_obj_by_object_info_cache(object_info_cache& obj_info_cache, const mat4& mat,
@@ -1734,7 +1734,7 @@ namespace mdl {
             instances_count, instances_mat, 0, 0, func, func_data, enable_bone_mat);
     }
 
-    void DispManager::entry_obj_by_object_info_cache_local(object_info_cache& obj_info_cache,
+    void DispManager::entry_obj_by_object_info_cache_screen(object_info_cache& obj_info_cache,
         const mat4& mat, const vec4* blend_color) {
         ::obj* obj = obj_info_cache.get_obj();
         if (!obj)
@@ -1743,7 +1743,7 @@ namespace mdl {
         const texture** textures = obj_info_cache.get_textures(disp_manager->field_C78);
         obj_mesh_index_buffer* obj_mesh_index_buffers = obj_info_cache.get_obj_mesh_index_buffers();
         obj_mesh_vertex_buffer* obj_mesh_vertex_buffers = obj_info_cache.get_obj_mesh_vertex_buffers();
-        entry_obj_local(obj, mat, obj_mesh_vertex_buffers, obj_mesh_index_buffers, textures, blend_color);
+        entry_obj_screen(obj, mat, obj_mesh_vertex_buffers, obj_mesh_index_buffers, textures, blend_color);
     }
 
     void DispManager::entry_list(ObjType type, ObjData* data) {
@@ -1786,7 +1786,7 @@ namespace mdl {
             *list_data = data;
     }
 
-    void DispManager::entry_list(ObjTypeLocal type, ObjData* data) {
+    void DispManager::entry_list(ObjTypeScreen type, ObjData* data) {
         ObjList& list = disp_manager->get_obj_list(type);
 
         ObjData** list_data = 0;
@@ -1870,8 +1870,8 @@ namespace mdl {
         return obj_data_list_sort[index].list[type];
     }
     
-    ObjListSort& DispManager::get_obj_data_list_sort(int32_t index, ObjTypeLocal type) {
-        return obj_list_sort_local[index][type];
+    ObjListSort& DispManager::get_obj_data_list_sort(int32_t index, ObjTypeScreen type) {
+        return obj_list_sort_screen[index][type];
     }
     
     ObjListSort& DispManager::get_obj_data_list_sort(int32_t index, ObjTypeReflect type) {
@@ -1910,7 +1910,7 @@ namespace mdl {
         }
     }
 
-    void DispManager::obj_sort(render_data_context& rend_data_ctx, ObjTypeLocal type, int32_t compare_func, const cam_data& cam) {
+    void DispManager::obj_sort(render_data_context& rend_data_ctx, ObjTypeScreen type, int32_t compare_func, const cam_data& cam) {
         static void (*draw_task_add_alpha_center_mat_center)(mdl::ObjListSort & obj_list_sort, const cam_data & cam)
             = (void (*)(mdl::ObjListSort & obj_list_sort, const cam_data & cam))0x000000014045D4B0;
 
@@ -1972,7 +1972,7 @@ namespace mdl {
                 cull_mode = DX_CULL_BACK;
                 break;
             }
-        return dx_default_states_get_rasterizer_state_depth_clip(cull_mode, !local_draw[rend_data_ctx.index]);
+        return dx_default_states_get_rasterizer_state_depth_clip(cull_mode, !screen_draw[rend_data_ctx.index]);
     }
 
     HOOK(void, FASTCALL, ObjDataListSort__add_objects, 0x000000014045A170, ObjDataListSort* This, ObjList* obj_list) {
@@ -1999,9 +1999,9 @@ namespace mdl {
         }
 
         const int32_t index = (int32_t)(This - obj_data_list_sort);
-        obj_list = obj_local;
-        list = obj_list_sort_local[index];
-        for (int32_t i = 0; i < OBJ_TYPE_LOCAL_MAX; i++) {
+        obj_list = obj_screen;
+        list = obj_list_sort_screen[index];
+        for (int32_t i = 0; i < OBJ_TYPE_SCREEN_MAX; i++) {
             int32_t count = obj_list->count;
             list->data = 0;
             list->count = count;
@@ -2047,7 +2047,7 @@ namespace mdl {
     HOOK(void, FASTCALL, disp_manager_refresh, 0x000000014045A930) {
         originaldisp_manager_refresh();
 
-        for (ObjList& i : obj_local) {
+        for (ObjList& i : obj_screen) {
             i.first = 0;
             i.last = 0;
             i.count = 0;

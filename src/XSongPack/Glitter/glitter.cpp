@@ -44,7 +44,7 @@ namespace Glitter {
 }
 
 void dx_glitter_struct::set_state(render_data_context& rend_data_ctx, cam_data& cam, const mat4& draw_mat,
-    const vec4& emission, bool alpha_test, bool cull, bool reflect, bool local) {
+    const vec4& emission, bool alpha_test, bool cull, bool reflect, bool screen) {
     rend_data_ctx.state.set_vs_shader(shaders[alpha_test].vertex);
     rend_data_ctx.state.set_ps_shader(shaders[alpha_test].pixel);
 
@@ -92,7 +92,7 @@ void dx_glitter_struct::set_state(render_data_context& rend_data_ctx, cam_data& 
     rend_data_ctx.state.set_vs_constant_buffer(3, 1, &buffer);
     rend_data_ctx.state.set_ps_constant_buffer(3, 1, &buffer);
     rend_data_ctx.state.set_rasterizer_state(dx_default_states_get_rasterizer_state_depth_clip(
-        cull ? (reflect ? DX_CULL_FRONT : DX_CULL_BACK) : DX_CULL_NONE, !local));
+        cull ? (reflect ? DX_CULL_FRONT : DX_CULL_BACK) : DX_CULL_NONE, !screen));
     rend_data_ctx.state.set_index_buffer(&index_buffer, 0, 0);
     rend_data_ctx.state.set_ps_sampler_state(0, 1, &sampler_state);
     rend_data_ctx.state.set_ps_sampler_state(1, 1, &sampler_state);

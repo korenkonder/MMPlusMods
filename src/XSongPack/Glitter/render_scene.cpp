@@ -188,7 +188,7 @@ namespace Glitter {
         mat4_transpose(&camera_data.inv_view, &cam_inv_view);
 
         vec3 x_vec = { 1.0f, 0.0f, 0.0f };
-        if (rend_group->flags & PARTICLE_LOCAL) {
+        if (rend_group->flags & PARTICLE_SCREEN) {
             mat4 mat;
             mat4_mul(&cam_inv_view, &rend_group->mat, &mat);
             mat4_mul(&cam_view, &mat, &mat);
@@ -348,7 +348,7 @@ namespace Glitter {
             inv_view_mat = cam_inv_view;
         }
 
-        if (rend_group->flags & PARTICLE_LOCAL) {
+        if (rend_group->flags & PARTICLE_SCREEN) {
             if (rend_group->flags & PARTICLE_EMITTER_LOCAL)
                 mat4_mul(&inv_view_mat, &rend_group->mat, &inv_view_mat);
             mat4_mul(&view_mat, &inv_view_mat, &view_mat);
@@ -908,7 +908,7 @@ namespace Glitter {
             mat4_transpose(&rend_group->mat_draw, &mat);
             dx_glitter_struct_data->set_state(rend_data_ctx, cam, mat, { emission, emission, emission, 1.0f },
                 alpha_test, rend_group->draw_type == DIRECTION_BILLBOARD && !rend_group->use_culling,
-                reflect, rend_group->disp_type == DISP_LOCAL);
+                reflect, rend_group->disp_type == DISP_SCREEN);
         }
 
         p_dx_buffer* buffers[] = { &rend_group->GetDxBuffer() };
@@ -994,12 +994,12 @@ namespace Glitter {
             inv_view_mat = cam_inv_view;
         }
 
-        bool local = false;
-        if (rend_group->flags & PARTICLE_LOCAL) {
+        bool screen = false;
+        if (rend_group->flags & PARTICLE_SCREEN) {
             mat4_mul(&inv_view_mat, &rend_group->mat, &inv_view_mat);
             mat4_mul(&view_mat, &inv_view_mat, &view_mat);
             mat4_invert(&view_mat, &inv_view_mat);
-            local = true;
+            screen = true;
         }
         mat4_mul(&view_mat, &cam_inv_view, &rend_group->mat_draw);
 
@@ -1082,7 +1082,7 @@ namespace Glitter {
 
         mdl::DispManager& disp_manager = *::disp_manager;
         extern bool reflect_full;
-        mdl::obj_reflect_enable = reflect_full && !local;
+        mdl::obj_reflect_enable = reflect_full && !screen;
         disp_manager.set_texture_pattern(0, 0);
         disp_manager.set_obj_flags((mdl::ObjFlags)0);
 
@@ -1109,7 +1109,7 @@ namespace Glitter {
 
                 mat4 mat;
                 if (billboard) {
-                    if (local)
+                    if (screen)
                         mat = mat4_identity;
                     else
                         mat = dir_mat;
@@ -1142,15 +1142,15 @@ namespace Glitter {
                 mat4_transpose(&tex_trans[1].mat, &tex_trans[1].mat);
                 disp_manager.set_texture_transform(tex_trans_count, tex_trans);
 
-                if (local)
+                if (screen)
                     mat4_mul(&mat, &cam_inv_view, &mat);
                 elem->mat_draw = mat;
 
                 mat4_transpose(&mat, &mat);
                 matrix_stack_data_push_matrix();
                 matrix_stack_data_load_matrix(mat);
-                if (local)
-                    disp_manager.entry_obj_by_object_info_local(rend_group->object, &elem->color);
+                if (screen)
+                    disp_manager.entry_obj_by_object_info_screen(rend_group->object, &elem->color);
                 else
                     disp_manager.entry_obj_by_object_info(rend_group->object, &elem->color);
                 disp++;
