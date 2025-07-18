@@ -751,6 +751,12 @@ HOOK(bool, FASTCALL, task_pv_game_add_task, 0x00000001405DA0D0, TaskPvGame::Args
     return ret;
 }
 
+HOOK(void, FASTCALL, pv_game__unload, 0x0000000140240B30, size_t pv_game) {
+    if (task_pv_game_x)
+        task_pv_game_x->unload();
+    originalpv_game__unload(pv_game);
+}
+
 HOOK(void, FASTCALL, pv_game__set_data_itmpv_alpha_obj_flags, 0x0000000140249820,
     size_t pv_game, int32_t chara_id, int32_t type, float_t alpha) {
     originalpv_game__set_data_itmpv_alpha_obj_flags(pv_game, chara_id, type, alpha);
@@ -854,6 +860,7 @@ void pv_game_patch() {
     INSTALL_HOOK(pv_game_pv_data__ctrl);
     INSTALL_HOOK(task_pv_game_del_task);
     INSTALL_HOOK(task_pv_game_add_task);
+    INSTALL_HOOK(pv_game__unload);
     INSTALL_HOOK(pv_game__set_data_itmpv_alpha_obj_flags);
     INSTALL_HOOK(pv_game_pv_data__dsc_reset_position);
     INSTALL_HOOK(pv_game_pv_data__load);
@@ -4069,6 +4076,9 @@ void TaskPvGameX::load(int32_t pv_id, int32_t modules[6]) {
 }
 
 void TaskPvGameX::unload() {
+    if (!state_old && !pv_id)
+        return;
+
     state_old = 0;
 
     data.unload();
