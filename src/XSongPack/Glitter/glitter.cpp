@@ -51,7 +51,6 @@ void dx_glitter_struct::set_state(render_data_context& rend_data_ctx, cam_data& 
     dx_glitter_struct::batch_data* batch_data = (dx_glitter_struct::batch_data*)rend_data_ctx.state.map(buffer);
 
     mat4 view_mat;
-    mat4 proj_mat;
     view_mat.row0 = cam.view_mat[0];
     view_mat.row1 = cam.view_mat[1];
     view_mat.row2 = cam.view_mat[2];

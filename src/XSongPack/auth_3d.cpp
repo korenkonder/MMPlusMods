@@ -58,7 +58,7 @@ void auth_3d_object__pre_disp_mid_impl(mat4& mat, auth_3d* auth, rob_chara* rob_
         ? rob_chara_get_item_adjust_data_mat(rob_chr)
         : rob_chara_get_adjust_data_mat(rob_chr),
         sub_1404E22C0(rob_chr), &m);
-    mat4_mul(&mat, &m, &mat);
+    mat4_mul(&m, &mat, &mat);
 }
 
 void auth_3d_object_hrc__pre_disp_mid_impl(auth_3d_object_hrc* oh, auth_3d* auth, rob_chara* rob_chr) {
