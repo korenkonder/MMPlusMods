@@ -632,6 +632,8 @@ public:
     void unload();
 
     void ctrl(int64_t curr_time, float_t delta_time);
+    void end();
+    void restart();
     void set_song_effect_alpha_obj_flags(int32_t chara_id, int32_t type, float_t alpha);
     void stop_current_pv();
 };
@@ -695,14 +697,6 @@ bool pv_game_load_WaitForAuthHandle_tail_impl() {
     return false;
 }
 
-void pv_game_ctrl_restart_mid_impl() {
-    if (task_pv_game_x->use) {
-        task_pv_game_x->data.stop();
-        task_pv_game_x->data.state = 30;
-        task_pv_game_x->state_old = 19;
-    }
-}
-
 void pv_game_ctrl_stop_mid_impl() {
     if (task_pv_game_x->use)
         task_pv_game_x->state_old = 21;
@@ -712,7 +706,6 @@ HOOK(void, FASTCALL, pv_game_load_InitScript_tail, 0x000000014025C2D0);
 HOOK(void, FASTCALL, pv_game_load_InitStageAuth_head, 0x000000014025CC87);
 HOOK(void, FASTCALL, pv_game_load_WaitForAuthObject_mid, 0x0000000140260847);
 HOOK(void, FASTCALL, pv_game_load_WaitForAuthHandle_tail, 0x00000001506FA0CA);
-HOOK(void, FASTCALL, pv_game_ctrl_restart_mid, 0x0000000140242681);
 HOOK(void, FASTCALL, pv_game_ctrl_stop_mid, 0x000000014024263F);
 
 HOOK(int64_t, FASTCALL, pv_game_pv_data__ctrl, 0x000000014024EB50,
@@ -751,8 +744,20 @@ HOOK(bool, FASTCALL, task_pv_game_add_task, 0x00000001405DA0D0, TaskPvGame::Args
     return ret;
 }
 
+HOOK(void, __fastcall, pv_game__end, 0x0000000140244230, size_t pv_game, bool complete, bool set_fade) {
+    if (task_pv_game_x->use)
+        task_pv_game_x->end();
+    originalpv_game__end(pv_game, complete, set_fade);
+}
+
+HOOK(void, FASTCALL, pv_game__restart, 0x00000001402436F0, size_t pv_game) {
+    if (task_pv_game_x->use)
+        task_pv_game_x->restart();
+    originalpv_game__restart(pv_game);
+}
+
 HOOK(void, FASTCALL, pv_game__unload, 0x0000000140240B30, size_t pv_game) {
-    if (task_pv_game_x)
+    if (task_pv_game_x->use)
         task_pv_game_x->unload();
     originalpv_game__unload(pv_game);
 }
@@ -855,11 +860,12 @@ void pv_game_patch() {
     INSTALL_HOOK(pv_game_load_InitStageAuth_head);
     INSTALL_HOOK(pv_game_load_WaitForAuthObject_mid);
     INSTALL_HOOK(pv_game_load_WaitForAuthHandle_tail);
-    INSTALL_HOOK(pv_game_ctrl_restart_mid);
     INSTALL_HOOK(pv_game_ctrl_stop_mid);
     INSTALL_HOOK(pv_game_pv_data__ctrl);
     INSTALL_HOOK(task_pv_game_del_task);
     INSTALL_HOOK(task_pv_game_add_task);
+    INSTALL_HOOK(pv_game__end);
+    INSTALL_HOOK(pv_game__restart);
     INSTALL_HOOK(pv_game__unload);
     INSTALL_HOOK(pv_game__set_data_itmpv_alpha_obj_flags);
     INSTALL_HOOK(pv_game_pv_data__dsc_reset_position);
@@ -3980,8 +3986,6 @@ bool TaskPvGameX::ctrl() {
             state_old = 21;
     } break;
     case 21: {
-        data.unload();
-        stage_data.unload();
         state = 50;
 
         state_old = 22;
@@ -4133,6 +4137,16 @@ void TaskPvGameX::ctrl(int64_t curr_time, float_t delta_time) {
     }
 
     stage_data.ctrl(delta_time);
+}
+
+void TaskPvGameX::end() {
+    data.pv_data.pv_end = true;
+}
+
+void TaskPvGameX::restart() {
+    stop_current_pv();
+    data.state = 30;
+    state_old = 19;
 }
 
 void TaskPvGameX::set_song_effect_alpha_obj_flags(int32_t chara_id, int32_t type, float_t alpha) {

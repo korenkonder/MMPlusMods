@@ -134,9 +134,6 @@ EXTERN ?originalpv_game_load_WaitForAuthObject_mid@@3P6AXXZEA : QWORD
 EXTERN ?pv_game_load_WaitForAuthHandle_tail_impl@@YA_NXZ : PROC
 EXTERN ?originalpv_game_load_WaitForAuthHandle_tail@@3P6AXXZEA : QWORD
 
-EXTERN ?pv_game_ctrl_restart_mid_impl@@YAXXZ : PROC
-EXTERN ?originalpv_game_ctrl_restart_mid@@3P6AXXZEA : QWORD
-
 EXTERN ?pv_game_ctrl_stop_mid_impl@@YAXXZ : PROC
 EXTERN ?originalpv_game_ctrl_stop_mid@@3P6AXXZEA : QWORD
 
@@ -331,13 +328,6 @@ end_func:
     popaq
     jmp ?originalpv_game_load_WaitForAuthHandle_tail@@3P6AXXZEA
 ?implOfpv_game_load_WaitForAuthHandle_tail@@YAXXZ ENDP
-
-?implOfpv_game_ctrl_restart_mid@@YAXXZ PROC PUBLIC
-    pushaq
-    call ?pv_game_ctrl_restart_mid_impl@@YAXXZ
-    popaq
-    jmp ?originalpv_game_ctrl_restart_mid@@3P6AXXZEA
-?implOfpv_game_ctrl_restart_mid@@YAXXZ ENDP
 
 ?implOfpv_game_ctrl_stop_mid@@YAXXZ PROC PUBLIC
     pushaq
