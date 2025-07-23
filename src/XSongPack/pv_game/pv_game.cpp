@@ -138,7 +138,7 @@ static_assert(sizeof(TaskPvGame) == 0x2B8, "\"TaskPvGame\" struct should have a 
 struct pv_game_parent {
     int8_t field_0;
     int8_t field_1;
-    uint8_t pv_state;
+    uint8_t outer_state;
     bool playing;
     int8_t field_4;
     int8_t field_5;
@@ -146,7 +146,7 @@ struct pv_game_parent {
     int8_t field_7;
     int64_t curr_time;
     float_t delta_time;
-    int32_t state;
+    int32_t inner_state;
     void(FASTCALL* update_func)(pv_game_parent*);
     int8_t field_20;
     int8_t field_21;
