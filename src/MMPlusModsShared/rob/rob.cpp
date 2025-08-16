@@ -28,6 +28,12 @@ rob_chara_bone_data* (FASTCALL* rob_chara_array_get_bone_data)(size_t rob_chr_sm
 
 rob_chara* rob_chara_array = (rob_chara*)0x000000014175D750;
 
+rob_chara_item_equip_object* rob_chara_item_equip::get_item_equip_object(item_id id) {
+    if (id >= ITEM_BODY && id <= ITEM_ITEM16)
+        return &item_equip_object[id];
+    return 0;
+}
+
 const mat4* rob_chara_get_adjust_data_mat(rob_chara* rob_chr) {
     return &rob_chr->data.adjust_data.mat;
 }
