@@ -9,14 +9,6 @@
 #include <Helpers.h>
 #include <algorithm>
 
-struct mothead_data {
-    mothead_data_type type;
-    int32_t frame;
-    void* data;
-};
-
-static_assert(sizeof(mothead_data) == 0x10, "\"mothead_data\" struct should have a size of 0x10");
-
 struct mothead_func_data {
     rob_chara* rob_chr;
     rob_chara_data* rob_chr_data;

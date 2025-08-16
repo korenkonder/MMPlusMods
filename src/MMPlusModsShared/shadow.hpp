@@ -6,7 +6,6 @@
 #pragma once
 
 #include "../KKdLib/default.hpp"
-#include "shared.hpp"
 
 enum shadow_type_enum {
     SHADOW_CHARA = 0,

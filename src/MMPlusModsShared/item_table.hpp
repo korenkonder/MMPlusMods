@@ -10,21 +10,6 @@
 #include "object.hpp"
 #include "types.hpp"
 
-enum chara_index {
-    CHARA_NONE   = -1,
-    CHARA_MIKU   = 0x00,
-    CHARA_RIN    = 0x01,
-    CHARA_LEN    = 0x02,
-    CHARA_LUKA   = 0x03,
-    CHARA_NERU   = 0x04,
-    CHARA_HAKU   = 0x05,
-    CHARA_KAITO  = 0x06,
-    CHARA_MEIKO  = 0x07,
-    CHARA_SAKINE = 0x08,
-    CHARA_TETO   = 0x09,
-    CHARA_MAX    = 0x0A,
-};
-
 enum item_id {
     ITEM_NONE        = -1,
     ITEM_BODY        = 0x00,
@@ -59,6 +44,9 @@ enum item_id {
     ITEM_ITEM15      = 0x1D,
     ITEM_ITEM16      = 0x1E,
     ITEM_MAX         = 0x1F,
+
+    ITEM_OSAGE_FIRST = ITEM_KAMI,
+    ITEM_OSAGE_COUNT = (ITEM_MAX - ITEM_KAMI),
 };
 
 enum item_sub_id {

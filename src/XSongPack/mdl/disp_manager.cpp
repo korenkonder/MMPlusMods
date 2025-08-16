@@ -1869,11 +1869,11 @@ namespace mdl {
     ObjListSort& DispManager::get_obj_data_list_sort(int32_t index, ObjType type) {
         return obj_data_list_sort[index].list[type];
     }
-    
+
     ObjListSort& DispManager::get_obj_data_list_sort(int32_t index, ObjTypeScreen type) {
         return obj_list_sort_screen[index][type];
     }
-    
+
     ObjListSort& DispManager::get_obj_data_list_sort(int32_t index, ObjTypeReflect type) {
         return obj_list_sort_reflect[index][type];
     }

@@ -505,6 +505,8 @@ struct object_info {
     }
 };
 
+static_assert(sizeof(object_info) == 0x04, "\"object_info\" struct should have a size of 0x04");
+
 inline bool operator >(const object_info& left, const object_info& right) {
     return *(uint32_t*)&left > *(uint32_t*)&right;
 }

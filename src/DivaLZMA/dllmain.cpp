@@ -5,7 +5,7 @@
 
 #include <Windows.h>
 #include <stdint.h>
-#include <time.h> 
+#include <time.h>
 #include "Helpers.h"
 #include "SigScan.h"
 #include "lzma_wrap.hpp"
