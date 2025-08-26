@@ -882,6 +882,96 @@ struct rob_chara_pv_data {
 
 static_assert(sizeof(rob_chara_pv_data) == 0xCC, "\"rob_chara_pv_data\" struct should have a size of 0xCC");
 
+struct rob_chara_item_equip_object;
+
+class ExNodeBlock;
+
+struct ExNodeBlock_vtbl {
+    ExNodeBlock* (FASTCALL* Dispose)(ExNodeBlock* This, uint8_t);
+    void(FASTCALL* Init)(ExNodeBlock* This);
+    void(FASTCALL* CtrlBegin)(ExNodeBlock* This);
+    void(FASTCALL* CtrlStep)(ExNodeBlock* This, int32_t stage, bool disable_external_force);
+    void(FASTCALL* CtrlMain)(ExNodeBlock* This, int32_t);
+    void(FASTCALL* CtrlOsagePlayData)(ExNodeBlock* This);
+    void(FASTCALL* Disp)(ExNodeBlock* This);
+    void(FASTCALL* Reset)(ExNodeBlock* This);
+    void(FASTCALL* Field_40)(ExNodeBlock* This);
+    void(FASTCALL* CtrlInitBegin)(ExNodeBlock* This);
+    void(FASTCALL* CtrlInitMain)(ExNodeBlock* This);
+    void(FASTCALL* CtrlEnd)(ExNodeBlock* This);
+};
+
+static_assert(sizeof(ExNodeBlock_vtbl) == 0x60, "\"ExNodeBlock_vtbl\" struct should have a size of 0x60");
+
+class ExNodeBlock {
+public:
+    ExNodeBlock_vtbl* __vftable;
+    bone_node* bone_node_ptr;
+    ExNodeType type;
+    const char* name;
+    bone_node* parent_bone_node;
+    prj::string parent_name;
+    ExNodeBlock* parent_node;
+    rob_chara_item_equip_object* item_equip_object;
+    bool is_parent;
+    bool done;
+    bool has_children_node;
+};
+
+static_assert(sizeof(ExNodeBlock) == 0x60, "\"ExNodeBlock\" struct should have a size of 0x60");
+
+struct RobOsageNode;
+
+struct RobOsageNodeDataNormalRef {
+    bool set;
+    RobOsageNode* n;
+    RobOsageNode* u;
+    RobOsageNode* d;
+    RobOsageNode* l;
+    RobOsageNode* r;
+    mat4 mat;
+};
+
+static_assert(sizeof(RobOsageNodeDataNormalRef) == 0x70, "\"RobOsageNodeDataNormalRef\" struct should have a size of 0x70");
+
+struct skin_param_hinge {
+    float_t ymin;
+    float_t ymax;
+    float_t zmin;
+    float_t zmax;
+};
+
+static_assert(sizeof(skin_param_hinge) == 0x10, "\"skin_param_hinge\" struct should have a size of 0x10");
+
+struct skin_param_osage_node {
+    float_t coli_r;
+    float_t weight;
+    float_t inertial_cancel;
+    skin_param_hinge hinge;
+};
+
+static_assert(sizeof(skin_param_osage_node) == 0x1C, "\"skin_param_osage_node\" struct should have a size of 0x1C");
+
+struct RobOsageNodeResetData {
+    vec3 pos;
+    vec3 delta_pos;
+    vec3 rotation;
+    float_t length;
+};
+
+static_assert(sizeof(RobOsageNodeResetData) == 0x28, "\"RobOsageNodeResetData\" struct should have a size of 0x28");
+
+struct skin_param_osage_root;
+
+struct RobOsageNodeData {
+    float_t force;
+    prj::vector<RobOsageNode*> boc;
+    RobOsageNodeDataNormalRef normal_ref;
+    skin_param_osage_node skp_osg_node;
+};
+
+static_assert(sizeof(RobOsageNodeData) == 0xB0, "\"RobOsageNodeData\" struct should have a size of 0xB0");
+
 struct opd_blend_data {
     int32_t motion_id;
     float_t frame;
@@ -892,6 +982,357 @@ struct opd_blend_data {
 };
 
 static_assert(sizeof(opd_blend_data) == 0x18, "\"opd_blend_data\" struct should have a size of 0x18");
+
+struct opd_vec3_data {
+    const float_t* x;
+    const float_t* y;
+    const float_t* z;
+};
+
+static_assert(sizeof(opd_vec3_data) == 0x18, "\"opd_vec3_data\" struct should have a size of 0x18");
+
+struct opd_node_data {
+    float_t length;
+    vec3 rotation;
+};
+
+static_assert(sizeof(opd_node_data) == 0x10, "\"opd_node_data\" struct should have a size of 0x10");
+
+struct opd_node_data_pair {
+    opd_node_data curr;
+    opd_node_data prev;
+};
+
+static_assert(sizeof(opd_node_data_pair) == 0x20, "\"opd_node_data_pair\" struct should have a size of 0x20");
+
+struct RobOsageNode {
+    float_t length;
+    vec3 pos;
+    vec3 fixed_pos;
+    vec3 delta_pos;
+    vec3 vel;
+    float_t child_length;
+    bone_node* bone_node_ptr;
+    mat4* bone_node_mat;
+    mat4 mat;
+    RobOsageNode* sibling_node;
+    float_t max_distance;
+    vec3 rel_pos;
+    RobOsageNodeResetData reset_data;
+    float_t hit;
+    float_t friction;
+    vec3 external_force;
+    float_t force;
+    RobOsageNodeData* data_ptr;
+    RobOsageNodeData data;
+    prj::vector<opd_vec3_data> opd_data;
+    opd_node_data_pair opd_node_data;
+};
+
+static_assert(sizeof(RobOsageNode) == 0x1D0, "\"RobOsageNode\" struct should have a size of 0x1D0");
+
+namespace SkinParam {
+    struct CollisionParam {
+        CollisionType type;
+        int32_t node_idx[2];
+        float_t radius;
+        vec3 pos[2];
+
+        CollisionParam();
+    };
+
+    static_assert(sizeof(SkinParam::CollisionParam) == 0x28, "\"SkinParam::CollisionParam\" struct should have a size of 0x28");
+};
+
+struct skin_param_osage_root_normal_ref {
+    prj::string n;
+    prj::string u;
+    prj::string d;
+    prj::string l;
+    prj::string r;
+};
+
+static_assert(sizeof(skin_param_osage_root_normal_ref) == 0xA0, "\"skin_param_osage_root_normal_ref\" struct should have a size of 0xA0");
+
+struct skin_param_osage_root_boc {
+    int32_t ed_node;
+    prj::string ed_root;
+    int32_t st_node;
+};
+
+static_assert(sizeof(skin_param_osage_root_boc) == 0x30, "\"skin_param_osage_root_boc\" struct should have a size of 0x30");
+
+struct skin_param_osage_root {
+    int32_t field_0;
+    float_t force;
+    float_t force_gain;
+    float_t air_res;
+    float_t rot_y;
+    float_t rot_z;
+    float_t init_rot_y;
+    float_t init_rot_z;
+    float_t hinge_y;
+    float_t hinge_z;
+    const char* name;
+    prj::vector<SkinParam::CollisionParam> coli;
+    float_t coli_r;
+    float_t friction;
+    float_t wind_afc;
+    int32_t yz_order;
+    prj::vector<skin_param_osage_root_boc> boc;
+    SkinParam::RootCollisionType coli_type;
+    float_t stiffness;
+    float_t move_cancel;
+    prj::string colli_tgt_osg;
+    prj::vector<skin_param_osage_root_normal_ref> normal_ref;
+};
+
+static_assert(sizeof(skin_param_osage_root) == 0xB8, "\"skin_param_osage_root\" struct should have a size of 0xB8");
+
+struct skin_param {
+    prj::vector<SkinParam::CollisionParam> coli;
+    float_t friction;
+    float_t wind_afc;
+    float_t air_res;
+    vec3 rot;
+    vec3 init_rot;
+    SkinParam::RootCollisionType coli_type;
+    float_t stiffness;
+    float_t move_cancel;
+    float_t coli_r;
+    skin_param_hinge hinge;
+    float_t force;
+    float_t force_gain;
+    prj::vector<RobOsageNode>* colli_tgt_osg;
+    int32_t calc_type;
+};
+
+static_assert(sizeof(skin_param) == 0x78, "\"skin_param\" struct should have a size of 0x78");
+
+struct OsageCollision {
+    struct Work {
+        SkinParam::CollisionType type;
+        float_t radius;
+        vec3 pos[2];
+        vec3 vec_center;
+        float_t vec_center_length;
+        float_t vec_center_length_squared;
+        float_t friction;
+    };
+
+    static_assert(sizeof(OsageCollision::Work) == 0x38, "\"OsageCollision::Work\" struct should have a size of 0x38");
+
+    prj::vector<Work> work_list;
+};
+
+static_assert(sizeof(OsageCollision) == 0x18, "\"OsageCollision\" struct should have a size of 0x18");
+
+struct osage_ring_data {
+    float_t ring_rectangle_x;
+    float_t ring_rectangle_y;
+    float_t ring_rectangle_width;
+    float_t ring_rectangle_height;
+    float_t ring_height;
+    float_t ring_out_height;
+    bool init;
+    OsageCollision coli;
+    prj::vector<SkinParam::CollisionParam> skp_root_coli;
+};
+
+static_assert(sizeof(osage_ring_data) == 0x50, "\"OsageCollision\" struct should have a size of 0x50");
+
+struct skin_param_file_data;
+
+struct CLOTHNode {
+    uint32_t flags;
+    vec3 pos;
+    vec3 fixed_pos;
+    vec3 prev_pos;
+    vec3 delta_pos;
+    vec3 normal;
+    vec3 tangent;
+    vec3 binormal;
+    float_t tangent_sign;
+    vec2 texcoord;
+    vec3 direction;
+    float_t dist_up;
+    float_t dist_down;
+    float_t dist_right;
+    float_t dist_left;
+    vec3 field_80;
+    RobOsageNodeResetData reset_data;
+    prj::vector<opd_vec3_data> opd_data;
+    opd_node_data_pair opd_node_data;
+};
+
+static_assert(sizeof(CLOTHNode) == 0xF0, "\"CLOTHNode\" struct should have a size of 0xF0");
+
+struct CLOTHLine {
+    size_t idx[2];
+    float_t length;
+};
+
+static_assert(sizeof(CLOTHLine) == 0x18, "\"CLOTHLine\" struct should have a size of 0x18");
+
+class CLOTH;
+
+struct CLOTH_vtbl {
+    void(FASTCALL* Init)(CLOTH* This);
+    CLOTH* (FASTCALL* Dispose)(CLOTH* This, uint8_t);
+    void(FASTCALL* SetSkinParamColiR)(CLOTH* This, float_t coli_r);
+    void(FASTCALL* SetSkinParamFriction)(CLOTH* This, float_t friction);
+    void(FASTCALL* SetSkinParamWindAfc)(CLOTH* This, float_t wind_afc);
+    void(FASTCALL* SetWindDirection)(CLOTH* This, vec3* wind_direction);
+    void(FASTCALL* Field_30)(CLOTH* This, float_t);
+    void(FASTCALL* SetSkinParamHinge)(CLOTH* This, float_t hinge_y, float_t hinge_z);
+    CLOTHNode* (FASTCALL* GetNodes)(CLOTH* This);
+    void(FASTCALL* Reset)(CLOTH* This);
+    void(FASTCALL* DrawNormals)(CLOTH* This);
+    void(FASTCALL* ResetData)(CLOTH* This);
+};
+
+static_assert(sizeof(CLOTH_vtbl) == 0x60, "\"CLOTH_vtbl\" struct should have a size of 0x60");
+
+class CLOTH {
+public:
+    CLOTH_vtbl* __vftable;
+    int32_t field_8;
+    size_t root_count;
+    size_t nodes_count;
+    prj::vector<CLOTHNode> nodes;
+    vec3 wind_direction;
+    float_t field_44;
+    bool set_external_force;
+    vec3 external_force;
+    prj::vector<CLOTHLine> lines;
+    skin_param* skin_param_ptr;
+    skin_param skin_param;
+    OsageCollision::Work coli_chara[64];
+    OsageCollision::Work coli_ring[64];
+    osage_ring_data ring;
+    mat4* mats;
+};
+
+static_assert(sizeof(CLOTH) == 0x1D48, "\"CLOTH\" struct should have a size of 0x1D48");
+
+struct RobClothRoot {
+    vec3 pos;
+    vec3 normal;
+    vec4 tangent;
+    bone_node* node[4];
+    mat4* node_mat[4];
+    mat4* mat[4];
+    float_t weight[4];
+    mat4 field_98;
+    mat4 field_D8;
+    mat4 field_118;
+};
+
+static_assert(sizeof(RobClothRoot) == 0x158, "\"RobClothRoot\" struct should have a size of 0x158");
+
+struct RobClothSubMeshArray {
+    obj_sub_mesh arr[4];
+};
+
+static_assert(sizeof(RobClothSubMeshArray) == 0x1E0, "\"RobClothSubMeshArray\" struct should have a size of 0x1E0");
+
+class RobCloth : public CLOTH {
+public:
+    prj::vector<RobClothRoot> root;
+    rob_chara_item_equip_object* itm_eq_obj;
+    struct obj_skin_block_cloth_root* cls_root;
+    struct obj_skin_block_cloth* cls_data;
+    float_t move_cancel;
+    bool osage_reset;
+    obj_mesh mesh[2];
+    RobClothSubMeshArray submesh[2];
+    obj_axis_aligned_bounding_box axis_aligned_bounding_box;
+    obj_mesh_vertex_buffer vertex_buffer[2];
+    obj_mesh_index_buffer index_buffer[2];
+    prj::map<prj::pair<int32_t, int32_t>, prj::list<RobOsageNodeResetData>> motion_reset_data;
+    prj::list<RobOsageNodeResetData>* reset_data_list;
+    item_id id;
+};
+
+static_assert(sizeof(RobCloth) == 0x2448, "\"RobCloth\" struct should have a size of 0x2448");
+
+class ExClothBlock : public ExNodeBlock {
+public:
+    RobCloth rob;
+    struct obj_skin_block_cloth* cls_data;
+    mat4* mats;
+    size_t index;
+};
+
+static_assert(sizeof(ExClothBlock) == 0x24C0, "\"ExClothBlock\" struct should have a size of 0x24C0");
+
+struct skin_param_file_data {
+    skin_param skin_param;
+    prj::vector<RobOsageNodeData> nodes_data;
+    bool depends_on_others;
+};
+
+static_assert(sizeof(skin_param_file_data) == 0x98, "\"skin_param_file_data\" struct should have a size of 0x98");
+
+struct osage_setting_osg_cat {
+    rob_osage_parts parts;
+    size_t exf;
+};
+
+static_assert(sizeof(osage_setting_osg_cat) == 0x10, "\"osage_setting_osg_cat\" struct should have a size of 0x10");
+
+struct RobOsage {
+    skin_param* skin_param_ptr;
+    bone_node_expression_data exp_data;
+    prj::vector<RobOsageNode> nodes;
+    RobOsageNode end_node;
+    skin_param skin_param;
+    osage_setting_osg_cat osage_setting;
+    bool field_2A0;
+    bool field_2A1;
+    float_t field_2A4;
+    OsageCollision::Work coli_chara[64];
+    OsageCollision::Work coli_ring[64];
+    vec3 wind_direction;
+    float_t inertia;
+    int32_t yz_order;
+    mat4* root_matrix_ptr;
+    mat4 root_matrix;
+    float_t move_cancel;
+    bool move_cancelled;
+    bool osage_reset;
+    bool osage_reset_done;
+    bool disable_collision;
+    osage_ring_data ring;
+    prj::map<prj::pair<int32_t, int32_t>, prj::list<RobOsageNodeResetData>> motion_reset_data;
+    prj::list<RobOsageNodeResetData>* reset_data_list;
+    bool set_external_force;
+    vec3 external_force;
+    item_id id;
+
+    void SetAirRes(float_t air_res);
+    void SetColiR(float_t coli_r);
+    void SetForce(float_t force, float_t force_gain);
+    void SetHinge(float_t hinge_y, float_t hinge_z);
+    void SetInitRot(float_t init_rot_y, float_t init_rot_z);
+    void SetMotionResetData(uint32_t motion_id, float_t frame);
+    void SetNodesExternalForce(vec3* external_force, float_t strength);
+    void SetNodesForce(float_t force);
+    void SetRot(float_t rot_y, float_t rot_z);
+};
+
+static_assert(sizeof(RobOsage) == 0x1F98, "\"RobOsage\" struct should have a size of 0x1F98");
+
+class ExOsageBlock : public ExNodeBlock {
+public:
+    size_t index;
+    RobOsage rob;
+    mat4* mats;
+    int32_t field_1FF8;
+    float_t step;
+};
+
+static_assert(sizeof(ExOsageBlock) == 0x2010, "\"ExOsageBlock\" struct should have a size of 0x2010");
 
 struct rob_chara_item_equip;
 
@@ -911,23 +1352,23 @@ struct rob_chara_item_equip_object {
     mat4* mat;
     int32_t init_iterations;
     bone_node* bone_nodes;
-    prj::vector<struct ExNodeBlock*> node_blocks;
+    prj::vector<ExNodeBlock*> node_blocks;
     prj::vector<bone_node> ex_data_bone_nodes;
     prj::vector<mat4> ex_data_bone_mats;
     prj::vector<mat4> ex_data_mats;
     prj::vector_pair<const char*, uint32_t> ex_bones;
     int64_t field_138;
     prj::vector<struct ExNullBlock*> null_blocks;
-    prj::vector<struct ExOsageBlock*> osage_blocks;
+    prj::vector<ExOsageBlock*> osage_blocks;
     prj::vector<struct ExConstraintBlock*> constraint_blocks;
     prj::vector<struct ExExpressionBlock*> expression_blocks;
-    prj::vector<struct ExClothBlock*> cloth_blocks;
+    prj::vector<ExClothBlock*> cloth_blocks;
     bool osage_depends_on_others;
     int32_t auth_obj_index; // RobTexAnim
     size_t osage_nodes_count;
     bool use_opd;
     int32_t auth_3d_id; // RobTexAnim
-    prj::vector<struct ExNodeBlock*> field_1D0;
+    prj::vector<ExNodeBlock*> node_blocks_calc_type_2;
     float_t delta_frame;
     bool field_1EC;
     obj_skin_ex_data* skin_ex_data;
@@ -948,7 +1389,6 @@ struct rob_chara_item_equip {
     int32_t field_A0;
     shadow_type_enum shadow_type;
     vec3 position;
-    int32_t field_B4;
     prj::vector<texture_pattern_struct> texture_pattern;
     object_info field_D0;
     item_id field_D4;

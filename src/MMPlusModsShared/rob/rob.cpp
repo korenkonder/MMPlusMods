@@ -28,6 +28,105 @@ rob_chara_bone_data* (FASTCALL* rob_chara_array_get_bone_data)(size_t rob_chr_sm
 
 rob_chara* rob_chara_array = (rob_chara*)0x000000014175D750;
 
+SkinParam::CollisionParam::CollisionParam() : type(), node_idx(), pos() {
+    radius = 0.2f;
+}
+
+void RobOsage::SetAirRes(float_t air_res) {
+    skin_param_ptr->air_res = air_res;
+}
+
+void RobOsage::SetColiR(float_t coli_r) {
+    RobOsageNode* i_begin = nodes.data() + 1;
+    RobOsageNode* i_end = nodes.data() + nodes.size();
+    for (RobOsageNode* i = i_begin; i != i_end; i++)
+        i->data_ptr->skp_osg_node.coli_r = coli_r;
+}
+
+void RobOsage::SetForce(float_t force, float_t force_gain) {
+    skin_param_ptr->force = force;
+    skin_param_ptr->force_gain = force_gain;
+    RobOsageNode* i_begin = nodes.data() + 1;
+    RobOsageNode* i_end = nodes.data() + nodes.size();
+    for (RobOsageNode* i = i_begin; i != i_end; i++) {
+        i->data_ptr->force = force;
+        force = force * force_gain;
+    }
+}
+
+void RobOsage::SetHinge(float_t hinge_y, float_t hinge_z) {
+    hinge_y = min_def(hinge_y, 179.0f);
+    hinge_z = min_def(hinge_z, 179.0f);
+    hinge_y = hinge_y * DEG_TO_RAD_FLOAT;
+    hinge_z = hinge_z * DEG_TO_RAD_FLOAT;
+    RobOsageNode* i_begin = nodes.data() + 1;
+    RobOsageNode* i_end = nodes.data() + nodes.size();
+    for (RobOsageNode* i = i_begin; i != i_end; i++) {
+        RobOsageNodeData* data = i->data_ptr;
+        data->skp_osg_node.hinge.ymin = -hinge_y;
+        data->skp_osg_node.hinge.ymax = hinge_y;
+        data->skp_osg_node.hinge.zmin = -hinge_z;
+        data->skp_osg_node.hinge.zmax = hinge_z;
+    }
+}
+
+void RobOsage::SetInitRot(float_t init_rot_y, float_t init_rot_z) {
+    skin_param_ptr->init_rot.y = init_rot_y * DEG_TO_RAD_FLOAT;
+    skin_param_ptr->init_rot.z = init_rot_z * DEG_TO_RAD_FLOAT;
+}
+
+void RobOsage::SetMotionResetData(uint32_t motion_id, float_t frame) {
+    osage_reset = true;
+    auto elem = motion_reset_data.find({ motion_id, (int32_t)prj::roundf(frame * 1000.0f) });
+    if (elem != motion_reset_data.end() && elem->second.size() + 1 == nodes.size())
+        reset_data_list = &elem->second;
+}
+
+// 0x1404815F0
+void RobOsage::SetNodesExternalForce(vec3* external_force, float_t strength) {
+    if (!external_force) {
+        RobOsageNode* i_begin = nodes.data() + 1;
+        RobOsageNode* i_end = nodes.data() + nodes.size();
+        for (RobOsageNode* i = i_begin; i != i_end; i++)
+            i->external_force = 0.0f;
+        return;
+    }
+
+    vec3 v4 = *external_force;
+    size_t exf = osage_setting.exf;
+    size_t v8 = 0;
+    if (exf >= 4) {
+        float_t strength4 = strength * strength * strength * strength;
+        v8 = ((exf - 4) / 4 + 1) * 4;
+        for (size_t v10 = v8 / 4; v10; v10--)
+            v4 *= strength4;
+    }
+
+    if (v8 < exf)
+        for (size_t v12 = exf - v8; v12; v12--)
+            v4 *= strength;
+
+    RobOsageNode* i_begin = nodes.data() + 1;
+    RobOsageNode* i_end = nodes.data() + nodes.size();
+    for (RobOsageNode* i = i_begin; i != i_end; i++) {
+        i->external_force = v4;
+        v4 *= strength;
+    }
+}
+
+// 0x1404818D0
+void RobOsage::SetNodesForce(float_t force) {
+    RobOsageNode* i_begin = nodes.data() + 1;
+    RobOsageNode* i_end = nodes.data() + nodes.size();
+    for (RobOsageNode* i = i_begin; i != i_end; i++)
+        i->force = force;
+}
+
+void RobOsage::SetRot(float_t rot_y, float_t rot_z) {
+    skin_param_ptr->rot.y = rot_y * DEG_TO_RAD_FLOAT;
+    skin_param_ptr->rot.z = rot_z * DEG_TO_RAD_FLOAT;
+}
+
 rob_chara_item_equip_object* rob_chara_item_equip::get_item_equip_object(item_id id) {
     if (id >= ITEM_BODY && id <= ITEM_ITEM16)
         return &item_equip_object[id];

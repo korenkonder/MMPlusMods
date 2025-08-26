@@ -2271,7 +2271,7 @@ void x_pv_game_title::show(int32_t index) {
     AetArgs args;
     args.id.id = aet_id;
     args.layer_name = "tit_01";
-    args.prio = spr::SPR_PRIO_01; // 05
+    args.prio = spr::SPR_PRIO_01;
 
     tit_layer.init(args);
 
