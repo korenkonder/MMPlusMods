@@ -677,8 +677,8 @@ struct p_dx_render_target {
         return !!ptr;
     }
 
-    void create(std::pair<p_dx_texture, int32_t>* color_texs,
-        int32_t num, std::pair<p_dx_texture, int32_t>* depth_tex = 0);
+    void create(const std::pair<p_dx_texture, int32_t>* color_texs,
+        int32_t num, const std::pair<p_dx_texture, int32_t>* depth_tex);
     void release();
 
     p_dx_render_target& operator=(const p_dx_render_target& other);

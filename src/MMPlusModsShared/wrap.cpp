@@ -217,9 +217,9 @@ p_dx_rasterizer_state& p_dx_rasterizer_state::operator=(const p_dx_rasterizer_st
     return *p_dx_rasterizer_state__move(this, &other);
 }
 
-void p_dx_render_target::create(std::pair<p_dx_texture, int32_t>* color_texs, int32_t num, std::pair<p_dx_texture, int32_t>* depth_tex) {
-    static void (*p_dx_render_target__create)(p_dx_render_target * This, std::pair<p_dx_texture, int32_t> * color_texs, int32_t num, std::pair<p_dx_texture, int32_t> * depth_tex)
-        = (void (*)(p_dx_render_target * This, std::pair<p_dx_texture, int32_t> * color_texs, int32_t num, std::pair<p_dx_texture, int32_t> * depth_tex))0x00000001402BCE50;
+void p_dx_render_target::create(const std::pair<p_dx_texture, int32_t>* color_texs, int32_t num, const std::pair<p_dx_texture, int32_t>* depth_tex) {
+    static void (*p_dx_render_target__create)(p_dx_render_target * This, const std::pair<p_dx_texture, int32_t> * color_texs, int32_t num, const std::pair<p_dx_texture, int32_t> * depth_tex)
+        = (void (*)(p_dx_render_target * This, const std::pair<p_dx_texture, int32_t> * color_texs, int32_t num, const std::pair<p_dx_texture, int32_t> * depth_tex))0x00000001402BCE50;
     p_dx_render_target__create(this, color_texs, num, depth_tex);
 }
 
