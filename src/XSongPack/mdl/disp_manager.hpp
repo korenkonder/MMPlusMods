@@ -267,7 +267,7 @@ namespace mdl {
 
     struct EtcObjData {
         color4u8_bgra color;
-        bool fog;
+        bool constant;
         int32_t first;
         int32_t count;
     };
