@@ -147,8 +147,8 @@ namespace rndr {
         RenderTexture rend_texture_mm[5];
         RenderTexture taa_buffer[4];
         texture* taa_tex[4];
-        RenderTexture aet_back_texture;
-        texture* aet_back_tex;
+        RenderTexture composite_back_texture;
+        texture* composite_back_tex;
         RenderTexture field_410;
         RenderTexture reduce_texture[5];
         texture* reduce_tex[5];
@@ -234,7 +234,7 @@ namespace rndr {
         p_dx_texture* field_1678;
         p_dx_texture* field_1680;
         RenderTexture field_1688;
-        bool aet_back;
+        bool composite_back;
         renderer::DOF3* dof;
         texture* transparency_tex[1];
         renderer::Transparency* transparency;
@@ -321,7 +321,7 @@ namespace rndr {
         rndr::Render::FrameTexture frame_texture[6];
 
         void apply_dof(render_data_context& rend_data_ctx, const cam_data& cam, RenderTexture& rt, const float_t image_quality);
-        void bind_render_texture(p_dx_state& state, bool aet_back = false);
+        void bind_render_texture(p_dx_state& state, bool composite_back = false);
         void draw_npr_frame(render_data_context& rend_data_ctx);
         void get_render_resolution(float_t* render_width, float_t* render_height,
             float_t* render_post_width, float_t* render_post_height);

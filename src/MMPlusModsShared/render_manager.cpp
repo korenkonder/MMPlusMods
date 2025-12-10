@@ -285,9 +285,9 @@ namespace rndr {
             enum_and(dof_debug_data.flags, ~DOF_DEBUG_ENABLE_DOF);
     }
 
-    void Render::bind_render_texture(p_dx_state& state, bool aet_back) {
-        if (aet_back) {
-            aet_back_texture.Bind(state);
+    void Render::bind_render_texture(p_dx_state& state, bool composite_back) {
+        if (composite_back) {
+            composite_back_texture.Bind(state);
             state.set_viewport(0, 0, render_width[0], render_height[0]);
         }
         else {

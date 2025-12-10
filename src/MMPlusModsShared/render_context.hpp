@@ -71,79 +71,79 @@ enum render_data_flags {
 };
 
 enum uniform_name {
-    U_NONE          = 0x00,
-    U_ALPHA_MASK    = 0x01,
-    U_ALPHA_TEST    = 0x02,
-    U_ANISO         = 0x03,
-    U_AET_BACK      = 0x04,
-    U_TEXTURE_BLEND = 0x05,
+    U_NONE           = 0x00,
+    U_ALPHA_MASK     = 0x01,
+    U_ALPHA_TEST     = 0x02,
+    U_ANISO          = 0x03,
+    U_COMPOSITE_BACK = 0x04,
+    U_TEXTURE_BLEND  = 0x05,
     U_UNK_NEW_IN_MM_IDK_WHAT_TO_DO_WITH_IT = 0x06,
-    U_CHARA_COLOR   = 0x07,
-    U_CLIP_PLANE    = 0x08,
-    U08             = 0x09,
-    U_DEPTH_PEEL    = 0x0A,
-    U_DEPTH         = 0x0B,
-    U0B             = 0x0C,
-    U_ALPHA_BLEND   = 0x0D,
-    U_RIPPLE_EMIT   = 0x0E,
-    U_ESM_FILTER    = 0x0F,
-    U_EXPOSURE      = 0x10,
-    U_SCENE_FADE    = 0x11,
-    U_FADE          = 0x12,
-    U_STAGE_AMBIENT = 0x13,
-    U_FLARE         = 0x14,
-    U_FOG_STAGE     = 0x15,
-    U_FOG_CHARA     = 0x16,
-    U16             = 0x17,
-    U_GAUSS         = 0x18,
-    U_EYE_LENS      = 0x19,
-    U_IMAGE_FILTER  = 0x1A,
-    U_INSTANCE      = 0x1B,
-    U_TONE_CURVE    = 0x1C,
-    U_LIGHT_PROJ    = 0x1D,
-    U_MAGNIFY       = 0x1E,
-    U_MEMBRANE      = 0x1F,
-    U_MLAA          = 0x20,
-    U_MLAA_SEARCH   = 0x21,
-    U_MORPH_COLOR   = 0x22,
-    U_MORPH         = 0x23,
-    U_MOVIE         = 0x24,
-    U24             = 0x25,
-    U25             = 0x26,
-    U_NPR_NORMAL    = 0x27,
-    U_NPR           = 0x28,
-    U_STAGE_SHADOW2 = 0x29,
-    U_REFLECT       = 0x2A,
-    U_REDUCE        = 0x2B,
-    U_CHARA_SHADOW  = 0x2C,
-    U_CHARA_SHADOW2 = 0x2D,
-    U2D             = 0x2E,
-    U2E             = 0x2F,
-    U_SHOW_VECTOR   = 0x30,
-    U_SKINNING      = 0x31,
-    U_SNOW_PARTICLE = 0x32,
-    U_SPECULAR_IBL  = 0x33,
-    U_COMBINER      = 0x34,
-    U_TEX_0_TYPE    = 0x35,
-    U_TEX_1_TYPE    = 0x36,
-    U_SSS_FILTER    = 0x37,
-    U_SSS_CHARA     = 0x38,
-    U_STAR          = 0x39,
-    U_TEXTURE_COUNT = 0x3A,
-    U_ENV_MAP       = 0x3B,
-    U_RIPPLE        = 0x3C,
-    U_TRANSLUCENCY  = 0x3D,
-    U_NORMAL        = 0x3E,
-    U_TRANSPARENCY  = 0x3F,
-    U_WATER_REFLECT = 0x40,
-    U40             = 0x41,
-    U41             = 0x42,
-    U_STAGE_SHADOW  = 0x43,
-    U_SPECULAR      = 0x44,
-    U_TONE_MAP      = 0x45,
-    U45             = 0x46,
-    U_MAX           = 0x47,
-    U_INVALID       = 0xFFFFFFFF,
+    U_CHARA_COLOR    = 0x07,
+    U_CLIP_PLANE     = 0x08,
+    U08              = 0x09,
+    U_DEPTH_PEEL     = 0x0A,
+    U_DEPTH          = 0x0B,
+    U0B              = 0x0C,
+    U_ALPHA_BLEND    = 0x0D,
+    U_RIPPLE_EMIT    = 0x0E,
+    U_ESM_FILTER     = 0x0F,
+    U_EXPOSURE       = 0x10,
+    U_SCENE_FADE     = 0x11,
+    U_FADE           = 0x12,
+    U_STAGE_AMBIENT  = 0x13,
+    U_FLARE          = 0x14,
+    U_FOG_STAGE      = 0x15,
+    U_FOG_CHARA      = 0x16,
+    U16              = 0x17,
+    U_GAUSS          = 0x18,
+    U_EYE_LENS       = 0x19,
+    U_IMAGE_FILTER   = 0x1A,
+    U_INSTANCE       = 0x1B,
+    U_TONE_CURVE     = 0x1C,
+    U_LIGHT_PROJ     = 0x1D,
+    U_MAGNIFY        = 0x1E,
+    U_MEMBRANE       = 0x1F,
+    U_MLAA           = 0x20,
+    U_MLAA_SEARCH    = 0x21,
+    U_MORPH_COLOR    = 0x22,
+    U_MORPH          = 0x23,
+    U_MOVIE          = 0x24,
+    U24              = 0x25,
+    U25              = 0x26,
+    U_NPR_NORMAL     = 0x27,
+    U_NPR            = 0x28,
+    U_STAGE_SHADOW2  = 0x29,
+    U_REFLECT        = 0x2A,
+    U_REDUCE         = 0x2B,
+    U_CHARA_SHADOW   = 0x2C,
+    U_CHARA_SHADOW2  = 0x2D,
+    U2D              = 0x2E,
+    U_DISP_LOD       = 0x2F,
+    U_SHOW_VECTOR    = 0x30,
+    U_SKINNING       = 0x31,
+    U_SNOW_PARTICLE  = 0x32,
+    U_SPECULAR_IBL   = 0x33,
+    U_COMBINER       = 0x34,
+    U_TEX_0_TYPE     = 0x35,
+    U_TEX_1_TYPE     = 0x36,
+    U_SSS_FILTER     = 0x37,
+    U_SSS_CHARA      = 0x38,
+    U_STAR           = 0x39,
+    U_TEXTURE_COUNT  = 0x3A,
+    U_ENV_MAP        = 0x3B,
+    U_RIPPLE         = 0x3C,
+    U_TRANSLUCENCY   = 0x3D,
+    U_NORMAL         = 0x3E,
+    U_TRANSPARENCY   = 0x3F,
+    U_WATER_REFLECT  = 0x40,
+    U40              = 0x41,
+    U41              = 0x42,
+    U_STAGE_SHADOW   = 0x43,
+    U_SPECULAR       = 0x44,
+    U_TONE_MAP       = 0x45,
+    U45              = 0x46,
+    U_MAX            = 0x47,
+    U_INVALID        = 0xFFFFFFFF,
 };
 
 struct uniform_value {
@@ -361,91 +361,91 @@ struct render_data {
         struct {
             union {
                 struct {
-                    uint32_t alpha_mask    : 1; // bit 0
-                    uint32_t alpha_test    : 1; // bit 1
-                    uint32_t aniso         : 2; // bit 2:3
-                    uint32_t aet_back      : 1; // bit 4
-                    uint32_t texture_blend : 3; // bit 5:7
-                    uint32_t unk           : 2; // bit 8:9
-                    uint32_t chara_color   : 1; // bit 10
-                    uint32_t clip_plane    : 1; // bit 11
-                    uint32_t u08           : 1; // bit 12
-                    uint32_t depth_peel    : 1; // bit 13
-                    uint32_t depth         : 1; // bit 14
-                    uint32_t u0b           : 1; // bit 15
-                    uint32_t alpha_blend   : 3; // bit 16:18
-                    uint32_t ripple_emit   : 1; // bit 19
-                    uint32_t esm_filter    : 2; // bit 20:21
-                    uint32_t exposure      : 2; // bit 22:23
-                    uint32_t scene_fade    : 1; // bit 24
-                    uint32_t fade          : 3; // bit 25:27
-                    uint32_t stage_ambient : 1; // bit 28
-                    uint32_t flare         : 2; // bit 29:30
+                    uint32_t alpha_mask     : 1; // bit 0
+                    uint32_t alpha_test     : 1; // bit 1
+                    uint32_t aniso          : 2; // bit 2:3
+                    uint32_t composite_back : 1; // bit 4
+                    uint32_t texture_blend  : 3; // bit 5:7
+                    uint32_t unk            : 2; // bit 8:9
+                    uint32_t chara_color    : 1; // bit 10
+                    uint32_t clip_plane     : 1; // bit 11
+                    uint32_t u08            : 1; // bit 12
+                    uint32_t depth_peel     : 1; // bit 13
+                    uint32_t depth          : 1; // bit 14
+                    uint32_t u0b            : 1; // bit 15
+                    uint32_t alpha_blend    : 3; // bit 16:18
+                    uint32_t ripple_emit    : 1; // bit 19
+                    uint32_t esm_filter     : 2; // bit 20:21
+                    uint32_t exposure       : 2; // bit 22:23
+                    uint32_t scene_fade     : 1; // bit 24
+                    uint32_t fade           : 3; // bit 25:27
+                    uint32_t stage_ambient  : 1; // bit 28
+                    uint32_t flare          : 2; // bit 29:30
                 } m;
                 uint32_t w;
             } x;
             union {
                 struct {
-                    uint32_t fog_stage     : 2; // bit 32+0:1
-                    uint32_t fog_chara     : 2; // bit 32+2:3
-                    uint32_t u16           : 1; // bit 32+4
-                    uint32_t gauss         : 2; // bit 32+5:6
-                    uint32_t eye_lens      : 1; // bit 32+7
-                    uint32_t image_filter  : 3; // bit 32+8:10
-                    uint32_t instance      : 1; // bit 32+11
-                    uint32_t tone_curve    : 1; // bit 32+12
-                    uint32_t light_proj    : 1; // bit 32+13
-                    uint32_t magnify       : 4; // bit 32+14:17
-                    uint32_t membrane      : 2; // bit 32+18:19
-                    uint32_t mlaa          : 2; // bit 32+20:21
-                    uint32_t mlaa_search   : 2; // bit 32+22:23
-                    uint32_t morph_color   : 1; // bit 32+24
-                    uint32_t morph         : 1; // bit 32+25
-                    uint32_t movie         : 2; // bit 32+26:27
-                    uint32_t u24           : 2; // bit 32+28:29
-                    uint32_t u25           : 1; // bit 32+30
-                    uint32_t npr_normal    : 1; // bit 32+31
+                    uint32_t fog_stage      : 2; // bit 32+0:1
+                    uint32_t fog_chara      : 2; // bit 32+2:3
+                    uint32_t u16            : 1; // bit 32+4
+                    uint32_t gauss          : 2; // bit 32+5:6
+                    uint32_t eye_lens       : 1; // bit 32+7
+                    uint32_t image_filter   : 3; // bit 32+8:10
+                    uint32_t instance       : 1; // bit 32+11
+                    uint32_t tone_curve     : 1; // bit 32+12
+                    uint32_t light_proj     : 1; // bit 32+13
+                    uint32_t magnify        : 4; // bit 32+14:17
+                    uint32_t membrane       : 2; // bit 32+18:19
+                    uint32_t mlaa           : 2; // bit 32+20:21
+                    uint32_t mlaa_search    : 2; // bit 32+22:23
+                    uint32_t morph_color    : 1; // bit 32+24
+                    uint32_t morph          : 1; // bit 32+25
+                    uint32_t movie          : 2; // bit 32+26:27
+                    uint32_t u24            : 2; // bit 32+28:29
+                    uint32_t u25            : 1; // bit 32+30
+                    uint32_t npr_normal     : 1; // bit 32+31
                 } m;
                 uint32_t w;
             } y;
             union {
                 struct {
-                    uint32_t npr           : 1; // bit 64+0
-                    uint32_t stage_shadow2 : 2; // bit 64+1:2
-                    uint32_t reflect       : 2; // bit 64+3:4
-                    uint32_t reduce        : 4; // bit 64+5:8
-                    uint32_t chara_shadow  : 1; // bit 64+9
-                    uint32_t chara_shadow2 : 2; // bit 64+10:11
-                    uint32_t u2d           : 3; // bit 64+12:14
-                    uint32_t u2e           : 2; // bit 64+15:16
-                    uint32_t show_vector   : 2; // bit 64+17:18
-                    uint32_t skinning      : 1; // bit 64+19
-                    uint32_t snow_particle : 2; // bit 64+20:21
-                    uint32_t specular_ibl  : 2; // bit 64+22:23
-                    uint32_t combiner      : 1; // bit 64+24
-                    uint32_t tex_0_type    : 2; // bit 64+25:26
-                    uint32_t tex_1_type    : 2; // bit 64+27:28
-                    uint32_t sss_filter    : 2; // bit 64+29:30
+                    uint32_t npr            : 1; // bit 64+0
+                    uint32_t stage_shadow2  : 2; // bit 64+1:2
+                    uint32_t reflect        : 2; // bit 64+3:4
+                    uint32_t reduce         : 4; // bit 64+5:8
+                    uint32_t chara_shadow   : 1; // bit 64+9
+                    uint32_t chara_shadow2  : 2; // bit 64+10:11
+                    uint32_t u2d            : 3; // bit 64+12:14
+                    uint32_t disp_lod       : 2; // bit 64+15:16
+                    uint32_t show_vector    : 2; // bit 64+17:18
+                    uint32_t skinning       : 1; // bit 64+19
+                    uint32_t snow_particle  : 2; // bit 64+20:21
+                    uint32_t specular_ibl   : 2; // bit 64+22:23
+                    uint32_t combiner       : 1; // bit 64+24
+                    uint32_t tex_0_type     : 2; // bit 64+25:26
+                    uint32_t tex_1_type     : 2; // bit 64+27:28
+                    uint32_t sss_filter     : 2; // bit 64+29:30
                 } m;
                 uint32_t w;
             } z;
             union {
                 struct {
-                    uint32_t sss_chara     : 1; // bit 96+0
-                    uint32_t star          : 1; // bit 96+1
-                    uint32_t texture_count : 2; // bit 96+2:3
-                    uint32_t env_map       : 1; // bit 96+4
-                    uint32_t ripple        : 2; // bit 96+5:6
-                    uint32_t translucency  : 1; // bit 96+7
-                    uint32_t normal        : 1; // bit 96+8
-                    uint32_t transparency  : 1; // bit 96+9
-                    uint32_t water_reflect : 1; // bit 96+10
-                    uint32_t u40           : 1; // bit 96+11
-                    uint32_t u41           : 1; // bit 96+12
-                    uint32_t stage_shadow  : 1; // bit 96+13
-                    uint32_t specular      : 1; // bit 96+14
-                    uint32_t tone_map      : 2; // bit 96+15
-                    uint32_t u45           : 1; // bit 96+16
+                    uint32_t sss_chara      : 1; // bit 96+0
+                    uint32_t star           : 1; // bit 96+1
+                    uint32_t texture_count  : 2; // bit 96+2:3
+                    uint32_t env_map        : 1; // bit 96+4
+                    uint32_t ripple         : 2; // bit 96+5:6
+                    uint32_t translucency   : 1; // bit 96+7
+                    uint32_t normal         : 1; // bit 96+8
+                    uint32_t transparency   : 1; // bit 96+9
+                    uint32_t water_reflect  : 1; // bit 96+10
+                    uint32_t u40            : 1; // bit 96+11
+                    uint32_t u41            : 1; // bit 96+12
+                    uint32_t stage_shadow   : 1; // bit 96+13
+                    uint32_t specular       : 1; // bit 96+14
+                    uint32_t tone_map       : 2; // bit 96+15
+                    uint32_t u45            : 1; // bit 96+16
                 } m;
                 uint32_t w;
             } w;
