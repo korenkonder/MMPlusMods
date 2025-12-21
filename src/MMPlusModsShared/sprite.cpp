@@ -17,9 +17,9 @@ namespace spr {
     spr::SprArgs* (FASTCALL* put_sprite)(const spr::SprArgs& args)
         = (spr::SprArgs * (FASTCALL*)(const spr::SprArgs & args))0x00000001405B49C0;
 
-    SprArgs::SprArgs() : kind(), attr(), blend(), index(), layer(),
-        prio(), resolution_mode_screen(), resolution_mode_sprite(), texture(),
-        shader(), field_AC(), field_F0(), vertex_array(), num_vertex(), field_108(),
+    SprArgs::SprArgs() : kind(), attr(), blend(), index(), layer(), prio(),
+        resolution_mode_screen(), resolution_mode_sprite(), texture(), shader(),
+        gogo_permut(), gogo_param(), field_F0(), vertex_array(), num_vertex(), field_108(),
         field_110(), set_viewport(), flags(), field_138(), next() {
         Reset();
     }
@@ -43,8 +43,11 @@ namespace spr {
         mat = mat4_identity;
         texture = 0;
         shader = 0;
-        field_AC = -1;
-        transform = mat4_null;
+        gogo_permut = -1;
+        gogo_param[0] = 0.0f;
+        gogo_param[1] = 0.0f;
+        gogo_param[2] = 0.0f;
+        gogo_param[3] = 0.0f;
         field_F0 = false;
         vertex_array = 0;
         num_vertex = 0;
@@ -84,7 +87,7 @@ namespace spr {
         void (FASTCALL * spr__SprArgs__SetVertexArray)(spr::SprArgs * This,
             spr::SpriteVertex * vertex_array, size_t num_vertex)
             = (void (FASTCALL*)(spr::SprArgs * This,
-                spr::SpriteVertex * vertex_array, size_t num_vertex))0x000000014063F040;
+                spr::SpriteVertex * vertex_array, size_t num_vertex))0x00000001405B7B40;
         spr__SprArgs__SetVertexArray(this, vertex_array, num_vertex);
     }
 

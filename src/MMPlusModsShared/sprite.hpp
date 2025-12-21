@@ -182,8 +182,15 @@ namespace spr {
         mat4 mat;
         texture* texture;
         int32_t shader;
-        int32_t field_AC;
-        mat4 transform;
+        // Clip sprite by quad set in gogo_param
+        // -1 - disable
+        //  0 - enable
+        int32_t gogo_permut;
+        // 0 - xy=p1, zw=p2
+        // 1 - xy=p3, zw=p4
+        // 2 - xyzw=unused
+        // 3 - x=width(unused), y=height, zw=unused
+        vec4 gogo_param[4];
         bool field_F0;
         spr::SpriteVertex* vertex_array;
         size_t num_vertex;
