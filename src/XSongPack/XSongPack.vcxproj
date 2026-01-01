@@ -153,8 +153,10 @@
     <ClCompile Include="pv_game\pvpp.cpp" />
     <ClCompile Include="pv_game\pvsr.cpp" />
     <ClCompile Include="pv_game\pv_game.cpp" />
+    <ClCompile Include="reflect_full.cpp" />
     <ClCompile Include="render_manager.cpp" />
     <ClCompile Include="rob\rob.cpp" />
+    <ClCompile Include="sss.cpp" />
     <ClCompile Include="stage.cpp" />
     <ClCompile Include="tomlc99\toml.c" />
     <ClCompile Include="wrap.cpp" />
@@ -175,8 +177,10 @@
     <ClInclude Include="pv_game\pvpp.hpp" />
     <ClInclude Include="pv_game\pvsr.hpp" />
     <ClInclude Include="pv_game\pv_game.hpp" />
+    <ClInclude Include="reflect_full.hpp" />
     <ClInclude Include="render_manager.hpp" />
     <ClInclude Include="rob\rob.hpp" />
+    <ClInclude Include="sss.hpp" />
     <ClInclude Include="stage.hpp" />
     <ClInclude Include="tomlc99\toml.h" />
     <ClInclude Include="wrap.hpp" />

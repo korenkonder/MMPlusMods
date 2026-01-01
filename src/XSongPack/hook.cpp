@@ -13,6 +13,7 @@
 #include "effect.hpp"
 #include "object.hpp"
 #include "render_manager.hpp"
+#include "sss.hpp"
 #include "stage.hpp"
 #include "wrap.hpp"
 #include <Helpers.h>
@@ -27,6 +28,7 @@ HOOK(int32_t, FASTCALL, data_init, 0x00000001402B6300) {
     pv_game_patch();
     render_manager_patch();
     rob_patch();
+    sss_patch();
     stage_patch();
 
     reflect_full_init();

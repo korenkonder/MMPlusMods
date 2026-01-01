@@ -9,55 +9,6 @@
 
 draw_state_struct& draw_state = *(draw_state_struct*)0x000000014174D9E0;
 
-sss_data*& _sss_data = *(sss_data**)0x00000001411497D8;
-
-void dx_sss_struct::calc_coef(render_data_context& rend_data_ctx, __int64 a3, __int64 a4, double_t step,
-    __int64 a6, const double_t* weights, const double_t* r_radius, const double_t* g_radius, const double_t* b_radius) {
-
-    void (*dx_sss_struct__calc_coef)(dx_sss_struct * This, render_data_context & rend_data_ctx, __int64 a3, __int64 a4, double_t step,
-        __int64 a6, const double_t * weights, const double_t * r_radius, const double_t * g_radius, const double_t * b_radius)
-        = (void (*)(dx_sss_struct * This, render_data_context & rend_data_ctx, __int64 a3, __int64 a4, double_t step,
-            __int64 a6, const double_t * weights, const double_t * r_radius, const double_t * g_radius, const double_t * b_radius))0x00000001405BD2A0;
-    dx_sss_struct__calc_coef(this, rend_data_ctx, a3, a4, step, a6, weights, r_radius, g_radius, b_radius);
-}
-
-void dx_sss_struct::draw_quad(render_data_context& rend_data_ctx, int32_t width, int32_t height,
-    float_t s0, float_t t0, float_t s1, float_t t1, const vec4& param) {
-    s0 -= s1;
-    t0 -= t1;
-
-    const float_t w = (float_t)max_def(width, 1);
-    const float_t h = (float_t)max_def(height, 1);
-
-    render_data::quad_shader_data* quad = (render_data::quad_shader_data*)rend_data_ctx.state.map(buffer_quad);
-    quad->g_texcoord_modifier = { 0.5f * s0, -0.5f * t0, 0.5f * s0, -0.5f * t0 + t0 };
-    quad->g_texel_size = { 1.0f / w, 1.0f / h, w, h };
-    quad->g_color = param;
-    rend_data_ctx.state.unmap(buffer_quad);
-
-    rend_data_ctx.state.set_vs_constant_buffer(0, 1, &buffer_quad);
-    rend_data_ctx.state.set_ps_constant_buffer(0, 1, &buffer_quad);
-
-    p_dx_buffer nul_buf;
-    p_dx_buffer* buffers[] = { &nul_buf };
-    int32_t strides[] = { 0 };
-    int32_t offsets[] = { 0 };
-    rend_data_ctx.state.set_vertex_buffer(0, 1, buffers, strides, offsets);
-    rend_data_ctx.state.set_index_buffer(&nul_buf, 0, 0);
-    rend_data_ctx.state.set_rasterizer_state(&rasterizer_state);
-    rend_data_ctx.state.set_depth_stencil_state(dx_default_states_get_depth_stencil_state(
-        DX_DEPTH_NONE, DX_DEPTH_FUNC_GREATER_EQUAL));
-    rend_data_ctx.state.set_blend_state(dx_default_states_get_blend_state(false,
-        DX_BLEND_SRC_ALPHA, DX_BLEND_INV_SRC_ALPHA,
-        DX_BLEND_SRC_ALPHA, DX_BLEND_INV_SRC_ALPHA, DX_BLEND_WRITE_MASK_RGBA));
-    rend_data_ctx.state.set_primitive_topology(DX_PRIMITIVE_TRIANGLE_STRIP);
-    rend_data_ctx.state.draw(4, 0);
-}
-
-vec4& sss_data::get_sss_param() {
-    return dx->sss_param;
-}
-
 void render_data::obj_shader_data::reset() {
     g_shader_flags = {};
 }
@@ -144,11 +95,6 @@ void render_data_context::reset_render_target(p_dx_state& p_dx_st) {
     p_dx_st.set_render_target(&rt);
 }
 
-void sss_data::set_texture(render_data_context& rend_data_ctx, int32_t index) {
-    rend_data_ctx.state.set_ps_textures(16, 1, &textures[index].GetColorTex());
-    rend_data_ctx.state.set_ps_sampler_state(12, 1, &dx->sampler_state);
-}
-
 void draw_state_struct::set_blend(render_data_context& rend_data_ctx, bool value) {
     rend_data[rend_data_ctx.index].blend = value;
 }
@@ -220,8 +166,4 @@ void render_data_context::uniform_value_reset() {
     uniform->arr[U45] = 0;
     uniform->arr[U_TEX_0_TYPE] = 0;
     uniform->arr[U_TEX_1_TYPE] = 0;
-}
-
-sss_data* sss_data_get() {
-    return _sss_data;
 }
