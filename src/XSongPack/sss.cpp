@@ -12,7 +12,7 @@
 
 sss_data*& _sss_data = *(sss_data**)0x00000001411497D8;
 
-float_t sss_inverse_scale = 0.0f;
+float_t sss_inverse_scale_reflect = 0.0f;
 vec4 sss_param_reflect = 0.0f;
 
 void dx_sss_struct::calc_coef(struct render_data_context& rend_data_ctx, __int64 a3, __int64 a4, double_t step,
@@ -97,7 +97,8 @@ void sss_data::apply_filter(struct render_data_context& rend_data_ctx) {
     const double_t r_radius[] = { 1.0, 2.0, 5.0 };
     const double_t g_radius[] = { 0.2, 0.4, 1.2 };
     const double_t b_radius[] = { 0.3, 0.7, 2.0 };
-    dx->calc_coef(rend_data_ctx, 0, 0, sss_inverse_scale, 0, weights, r_radius, g_radius, b_radius);
+    dx->calc_coef(rend_data_ctx, 0, 0, reflect_draw[rend_data_ctx.index]
+        ? sss_inverse_scale_reflect : dx->inverse_scale, 0, weights, r_radius, g_radius, b_radius);
 
     textures[reflect_draw[rend_data_ctx.index] ? 3 : 1].Bind(rend_data_ctx.state);
     rend_data_ctx.state.set_viewport(0, 0, 320, 180);
@@ -209,7 +210,7 @@ HOOK(void, FASTCALL, sss_data__pre_proc, 0x00000001405BDF60, sss_data* This, con
     float_t inverse_scale = (float_t)(1.0 / clamp_def(fov_scale * distance_to_interest, 0.25f, 100.0f));
     if (inverse_scale < 0.145f)
         sss_strength = max_def(inverse_scale - 0.02f, 0.0f) * 8.0f * 0.6f;
-    sss_inverse_scale = inverse_scale;
+    sss_inverse_scale_reflect = inverse_scale;
     sss_param_reflect = { sss_strength, 0.0f, 0.0f, 0.0f };
 }
 
