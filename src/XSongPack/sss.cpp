@@ -57,7 +57,7 @@ void dx_sss_struct::draw_quad(struct render_data_context& rend_data_ctx, int32_t
     rend_data_ctx.state.draw(4, 0);
 }
 
-// 0x00000001405BE2B0
+// 0x1405BE2B0
 void sss_data::apply_filter(struct render_data_context& rend_data_ctx) {
     const int32_t sss_count = 6;
 
@@ -110,12 +110,12 @@ void sss_data::apply_filter(struct render_data_context& rend_data_ctx) {
     dx->draw_quad(rend_data_ctx, textures[2].GetWidth(), textures[2].GetHeight(), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 }
 
-// 0x00000001405BE2A0
+// 0x1405BE2A0
 vec4& sss_data::get_sss_param() {
     return dx->sss_param;
 }
 
-// 0x00000001405BDE90
+// 0x1405BDE90
 bool sss_data::set(struct render_data_context& rend_data_ctx) {
     if (!init_data)
         return false;
@@ -156,13 +156,13 @@ bool sss_data::set(struct render_data_context& rend_data_ctx, RenderTexture& rt,
     return true;
 }
 
-// 0x00000001405BE630
+// 0x1405BE630
 void sss_data::set_texture(struct render_data_context& rend_data_ctx, int32_t index) {
     rend_data_ctx.state.set_ps_textures(16, 1, &textures[index].GetColorTex());
     rend_data_ctx.state.set_ps_sampler_state(12, 1, &dx->sampler_state);
 }
 
-// 0x00000001405BDA20
+// 0x1405BDA20
 sss_data* sss_data_get() {
     return _sss_data;
 }
