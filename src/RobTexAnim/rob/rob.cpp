@@ -111,7 +111,7 @@ HOOK(void, FASTCALL, rob_chara_item_equip_object_disp, 0x0000000140590810, rob_c
     texture_transform_struct tex_trans[TEXTURE_TRANSFORM_COUNT];
 
     static void(FASTCALL * disp_manager_set_texture_transform)(int32_t count, texture_transform_struct * data)
-        = (void(FASTCALL*)(int32_t count, texture_transform_struct * data))0x000000014043A600;
+        = (void(FASTCALL*)(int32_t count, texture_transform_struct * data))0x000000014045ACB0;
 
     auth_3d_id& id = *(auth_3d_id*)&itm_eq_obj->auth_3d_id;
     if (id.check_not_empty()) {
