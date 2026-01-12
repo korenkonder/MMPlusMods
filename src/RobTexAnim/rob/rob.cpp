@@ -77,7 +77,16 @@ HOOK(rob_chara_item_equip_object*, FASTCALL, rob_chara_item_equip_object__rob_ch
 HOOK(void, FASTCALL, rob_chara_item_equip_object_ctrl, 0x0000000140590560, rob_chara_item_equip_object* itm_eq_obj) {
     originalrob_chara_item_equip_object_ctrl(itm_eq_obj);
 
-    if (itm_eq_obj->auth_3d_id != -1 && itm_eq_obj->auth_obj_index == -1
+    if (itm_eq_obj->auth_3d_id == -1)
+        return;
+
+    static size_t (*render_get)() = (size_t(*)())0x000000014049F8E0;
+    static int32_t(FASTCALL * rndr_Render__get_pause_state)(size_t This)
+        = (int32_t(FASTCALL*)(size_t This))0x00000001404A5BD0;
+    if (rndr_Render__get_pause_state(render_get()) != 2)
+        (*(auth_3d_id*)&itm_eq_obj->auth_3d_id).set_paused(false);
+
+    if (itm_eq_obj->auth_obj_index == -1
         && (*(auth_3d_id*)&itm_eq_obj->auth_3d_id).check_loaded()) {
         const char* obj_name = object_database_get_obj_name(itm_eq_obj->obj_info);
 
