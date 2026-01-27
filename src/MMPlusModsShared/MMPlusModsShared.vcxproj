@@ -153,6 +153,7 @@
     <ClInclude Include="stage.hpp" />
     <ClInclude Include="task.hpp" />
     <ClInclude Include="texture.hpp" />
+    <ClInclude Include="tomlc99\toml.h" />
     <ClInclude Include="types.hpp" />
     <ClInclude Include="wrap.hpp" />
   </ItemGroup>
@@ -179,6 +180,7 @@
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="task.cpp" />
     <ClCompile Include="texture.cpp" />
+    <ClCompile Include="tomlc99\toml.c" />
     <ClCompile Include="wrap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

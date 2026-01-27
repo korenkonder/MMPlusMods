@@ -158,7 +158,6 @@
     <ClCompile Include="rob\rob.cpp" />
     <ClCompile Include="sss.cpp" />
     <ClCompile Include="stage.cpp" />
-    <ClCompile Include="tomlc99\toml.c" />
     <ClCompile Include="wrap.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -182,7 +181,6 @@
     <ClInclude Include="rob\rob.hpp" />
     <ClInclude Include="sss.hpp" />
     <ClInclude Include="stage.hpp" />
-    <ClInclude Include="tomlc99\toml.h" />
     <ClInclude Include="wrap.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -3,9 +3,10 @@
     GitHub/GitLab: korenkonder
 */
 
-#include <Windows.h>
 #include <stdint.h>
 #include "Helpers.h"
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #include <tomlc99/toml.h>
 
 int32_t* opd_motion_set_ids = (int32_t*)0x140DB9160;

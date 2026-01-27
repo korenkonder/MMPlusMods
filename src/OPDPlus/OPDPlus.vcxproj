@@ -75,7 +75,8 @@
       <SubSystem>Windows</SubSystem>
       <AdditionalOptions>/ignore:4098 /ignore:4099 /ignore:4286 %(AdditionalOptions)</AdditionalOptions>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalLibraryDirectories>$(SolutionDir)extern\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)extern\lib;$(SolutionDir)lib\debug\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib;syelog.lib;KKdLib.lib;MMPlusModsShared.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -105,8 +106,9 @@
       <AdditionalOptions>/ignore:4098 /ignore:4099 /ignore:4286 %(AdditionalOptions)</AdditionalOptions>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalLibraryDirectories>$(SolutionDir)extern\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)extern\lib;$(SolutionDir)lib\release\</AdditionalLibraryDirectories>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>detours.lib;syelog.lib;KKdLib.lib;MMPlusModsShared.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -114,10 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="tomlc99\toml.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="tomlc99\toml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
