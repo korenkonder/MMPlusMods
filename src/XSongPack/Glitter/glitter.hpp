@@ -20,6 +20,8 @@
 
 #define SHARED_GLITTER_BUFFER (1)
 
+struct farc;
+
 namespace Glitter {
     enum CurveFlag {
         CURVE_RANDOM_RANGE        = 0x01,
