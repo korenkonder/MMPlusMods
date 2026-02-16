@@ -10,6 +10,8 @@
 
 const mat4* (FASTCALL* rob_chara_bone_data_get_mats_mat)(rob_chara_bone_data* rob_bone_data, size_t index)
     = (const mat4 * (FASTCALL*)(rob_chara_bone_data* rob_bone_data, size_t index))0x000000014044A3E0;
+const char* (FASTCALL* chara_index_get_chara_name)(chara_index chara_index)
+    = (const char* (FASTCALL*)(chara_index chara_index))0x00000001404DE490;
 const char* (FASTCALL* chara_index_get_auth_3d_name)(chara_index chara_index)
     = (const char* (FASTCALL*)(chara_index chara_index))0x00000001404DE4D0;
 const mat4* (FASTCALL* sub_1404E22C0)(rob_chara* rob_chr)
