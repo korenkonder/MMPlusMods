@@ -10,7 +10,7 @@ It only generates cache for missing motions or modules. If FARC with OPD is pres
 
 ## OPD Plus
 Small patch that allows additional OPD motion sets and motions
-Motion sets and motions are specified in `rom/mod_OPDPlus.toml` inside mod folder.
+Motion sets and motions are specified in `rom/rob/mod_OPDPlus.toml` inside mod folder.
 
 Syntax:
 ```
