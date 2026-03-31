@@ -339,9 +339,9 @@ namespace mdl {
         static draw_func draw_sub_mesh_shadow = (draw_func)0x000000014045B480;
         static draw_func draw_sub_mesh_sss = (draw_func)0x000000014045B530;
         static draw_func draw_sub_mesh_default = (draw_func)0x00000001404629C0;
-        static draw_func draw_sub_mesh_translucent = (draw_func)0x0000000140462AF0;
-        static draw_func draw_sub_mesh_reflect_reflect_map = (draw_func)0x0000000140462E00;
-        static draw_func draw_sub_mesh_reflect = (draw_func)0x0000000140462E80;
+        static draw_func draw_sub_mesh_no_mat = (draw_func)0x0000000140462AF0;
+        static draw_func draw_sub_mesh_cheap_reflect_map = (draw_func)0x0000000140462E00;
+        static draw_func draw_sub_mesh_cheap = (draw_func)0x0000000140462E80;
 
         static void (*draw_etc_obj)(render_data_context & rend_data_ctx, EtcObjData * etc, mat4 * mat)
             = (void (*)(render_data_context & rend_data_ctx, EtcObjData * etc, mat4 * mat))0x0000000140462F30;
@@ -377,15 +377,15 @@ namespace mdl {
         case OBJ_TYPE_SHADOW_OBJECT_STAGE:
             func = draw_sub_mesh_shadow;
             break;
-        case OBJ_TYPE_TYPE_6:
+        case OBJ_TYPE_SILHOUETTE:
         case OBJ_TYPE_TYPE_30:
         case OBJ_TYPE_TYPE_31:
         case OBJ_TYPE_TYPE_32:
-            func = draw_sub_mesh_translucent;
+            func = draw_sub_mesh_no_mat;
             shader_get_id_by_name(rend_data_ctx, "PREPASS");
             break;
-        case OBJ_TYPE_TYPE_7:
-            func = draw_sub_mesh_translucent;
+        case OBJ_TYPE_SILHOUETTE_HIGH:
+            func = draw_sub_mesh_no_mat;
             shader_get_id_by_name(rend_data_ctx, "SIL");
 
             alpha_test = 1;
@@ -398,9 +398,9 @@ namespace mdl {
 
             if (!reflect_draw[rend_data_ctx.index]) {
                 if (rend_data_ctx.get_uniform_value(U_REFLECT) == 1)
-                    func = draw_sub_mesh_reflect;
+                    func = draw_sub_mesh_cheap;
                 else if (render_manager.reflect_type == STAGE_DATA_REFLECT_REFLECT_MAP)
-                    func = draw_sub_mesh_reflect_reflect_map;
+                    func = draw_sub_mesh_cheap_reflect_map;
             }
             break;
         case OBJ_TYPE_REFLECT_CHARA_TRANSLUCENT:
@@ -411,9 +411,9 @@ namespace mdl {
 
             if (!reflect_draw[rend_data_ctx.index]) {
                 if (rend_data_ctx.get_uniform_value(U_REFLECT) == 1)
-                    func = draw_sub_mesh_reflect;
+                    func = draw_sub_mesh_cheap;
                 else if (render_manager.reflect_type == STAGE_DATA_REFLECT_REFLECT_MAP)
-                    func = draw_sub_mesh_reflect_reflect_map;
+                    func = draw_sub_mesh_cheap_reflect_map;
             }
             break;
         case OBJ_TYPE_REFLECT_CHARA_TRANSPARENT:
@@ -426,9 +426,9 @@ namespace mdl {
 
             if (!reflect_draw[rend_data_ctx.index]) {
                 if (rend_data_ctx.get_uniform_value(U_REFLECT) == 1)
-                    func = draw_sub_mesh_reflect;
+                    func = draw_sub_mesh_cheap;
                 else if (render_manager.reflect_type == STAGE_DATA_REFLECT_REFLECT_MAP)
-                    func = draw_sub_mesh_reflect_reflect_map;
+                    func = draw_sub_mesh_cheap_reflect_map;
             }
             break;
         case OBJ_TYPE_REFLECT_OPAQUE:
@@ -440,7 +440,7 @@ namespace mdl {
                 rend_data_ctx.state.set_rasterizer_state(dx_default_states_get_rasterizer_state(DX_CULL_FRONT));
             }
             else if (!reflect_texture_mask)
-                func = draw_sub_mesh_reflect_reflect_map;
+                func = draw_sub_mesh_cheap_reflect_map;
             break;
         case OBJ_TYPE_REFLECT_TRANSLUCENT:
             alpha_test = 1;
@@ -518,7 +518,7 @@ namespace mdl {
             depth_write = false;
             break;
         case OBJ_TYPE_USER:
-            func = draw_sub_mesh_translucent;
+            func = draw_sub_mesh_no_mat;
             break;
         case OBJ_TYPE_REFLECT_TRANSLUCENT_SORT_BY_RADIUS:
             alpha_test = 1;
@@ -1136,8 +1136,8 @@ namespace mdl {
                 if (obj_flags & mdl::OBJ_SHADOW)
                     entry_list((ObjType)(OBJ_TYPE_SHADOW_CHARA
                         + disp_manager->shadow_type), data);
-                if (obj_flags & mdl::OBJ_40)
-                    entry_list(OBJ_TYPE_TYPE_7, data);
+                if (obj_flags & mdl::OBJ_SILHOUETTE_HIGH)
+                    entry_list(OBJ_TYPE_SILHOUETTE_HIGH, data);
                 if (obj_flags & mdl::OBJ_CHARA_REFLECT)
                     entry_list(OBJ_TYPE_REFLECT_CHARA_OPAQUE, data);
                 if (obj_flags & mdl::OBJ_REFLECT) {

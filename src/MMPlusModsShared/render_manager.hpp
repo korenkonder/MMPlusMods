@@ -352,9 +352,9 @@ namespace rndr {
         bool alpha_z_sort;
         bool glitter;
         bool draw_pass_3d[4];
-        int8_t field_11F;
-        int8_t field_120;
-        int8_t field_121;
+        bool silhouette;
+        bool silhouette_high;
+        bool show_ref_map;
         stage_data_reflect_type reflect_type;
         bool clear;
         int32_t tex_index[12];

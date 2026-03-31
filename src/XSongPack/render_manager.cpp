@@ -556,7 +556,7 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
             || disp_manager->get_obj_count(mdl::OBJ_TYPE_REFLECT_TRANSLUCENT_SORT_BY_RADIUS)
             || disp_manager->get_obj_count(mdl::OBJ_TYPE_REFLECT_TRANSLUCENT))) {
         reflect_draw[rend_data_ctx.index] = true;
-        draw_state.shader_index = -1;
+        draw_state.show_flags = -1;
 
         const float_t reflection_quality = reflection_quality_full_get();
         rend_data_ctx.state.set_viewport(0, 0,
