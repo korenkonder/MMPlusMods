@@ -10,6 +10,379 @@
 #include <vector>
 #include <Helpers.h>
 
+enum dx_command_index {
+    DX_COMMAND_ClearRenderTargetView  = 0x00,
+    DX_COMMAND_ClearDepthStencilView  = 0x01,
+    DX_COMMAND_OMSetRenderTargets     = 0x02,
+    DX_COMMAND_RSSetViewports         = 0x03,
+    DX_COMMAND_VSSetShader            = 0x04,
+    DX_COMMAND_VSSetConstantBuffers   = 0x05,
+    DX_COMMAND_VSSetShaderResources   = 0x06,
+    DX_COMMAND_VSSetSamplers          = 0x07,
+    DX_COMMAND_PSSetShader            = 0x08,
+    DX_COMMAND_PSSetConstantBuffers   = 0x09,
+    DX_COMMAND_PSSetShaderResources   = 0x0A,
+    DX_COMMAND_PSSetSamplers          = 0x0B,
+    DX_COMMAND_IASetInputLayout       = 0x0C,
+    DX_COMMAND_IASetVertexBuffers     = 0x0D,
+    DX_COMMAND_IASetIndexBuffer       = 0x0E,
+    DX_COMMAND_IASetPrimitiveTopology = 0x0F,
+    DX_COMMAND_RSSetState             = 0x10,
+    DX_COMMAND_OMSetDepthStencilState = 0x11,
+    DX_COMMAND_OMSetBlendState        = 0x12,
+    DX_COMMAND_Draw                   = 0x13,
+    DX_COMMAND_DrawIndexed            = 0x14,
+    DX_COMMAND_Map                    = 0x15,
+    DX_COMMAND_Unmap                  = 0x16,
+    DX_COMMAND_Begin                  = 0x17,
+    DX_COMMAND_End                    = 0x18,
+    DX_COMMAND_GenerateMips           = 0x19,
+    DX_COMMAND_CopyResource           = 0x1A,
+    DX_COMMAND_CopySubresourceRegion  = 0x1B,
+    DX_COMMAND_BeginEvent             = 0x1C,
+    DX_COMMAND_EndEvent               = 0x1D,
+    DX_COMMAND_MAX                    = 0x1E,
+};
+
+enum dx_state_flags {
+    DX_STATE_QUERY  = 0x01,
+    DX_STATE_FLAG_2 = 0x02,
+};
+
+enum dx_state_update_flags {
+    DX_STATE_UPDATE_VERTEX_BUFFER       = 0x00001,
+    DX_STATE_UPDATE_INDEX_BUFFER        = 0x00002,
+    DX_STATE_UPDATE_PRIMITIVE_TOPOLOGY  = 0x00004,
+    DX_STATE_UPDATE_VS_SHADER           = 0x00008,
+    DX_STATE_UPDATE_PS_SHADER           = 0x00010,
+    DX_STATE_UPDATE_VS_BUFFER           = 0x00020,
+    DX_STATE_UPDATE_VS_RESOURCE         = 0x00040,
+    DX_STATE_UPDATE_VS_TEXTURE          = 0x00080,
+    DX_STATE_UPDATE_VS_SAMPLER          = 0x00100,
+    DX_STATE_UPDATE_PS_BUFFER           = 0x00200,
+    DX_STATE_UPDATE_PS_TEXTURE          = 0x00400,
+    DX_STATE_UPDATE_PS_SAMPLER          = 0x00800,
+    DX_STATE_UPDATE_RASTERIZER_STATE    = 0x01000,
+    DX_STATE_UPDATE_DEPTH_STENCIL_STATE = 0x02000,
+    DX_STATE_UPDATE_BLEND_STATE         = 0x04000,
+    DX_STATE_UPDATE_VIEWPORT            = 0x08000,
+    DX_STATE_UPDATE_RENDER_TARGET       = 0x10000,
+};
+
+struct dx_blend_state;
+struct dx_pixel_shader;
+struct dx_rasterizer;
+struct dx_sampler_state;
+struct dx_vertex_shader;
+
+struct dx_buffer {
+    int32_t uses;
+    dx_buffer* free_next;
+    int32_t flags;
+    ID3D11Buffer* buffer;
+    void* data;
+    int32_t size;
+    ID3D11ShaderResourceView* resource_view;
+};
+
+static_assert(sizeof(dx_buffer) == 0x38, "\"dx_buffer\" struct should have a size of 0x38");
+
+struct dx_buffer_offset_stride {
+    dx_buffer* buffer;
+    int32_t stride;
+    int32_t offset;
+};
+
+static_assert(sizeof(dx_buffer_offset_stride) == 0x10, "\"dx_buffer_offset_stride\" struct should have a size of 0x10");
+
+struct dx_command_clear_render_target_view {
+    ID3D11RenderTargetView* pRenderTargetView;
+    FLOAT ColorRGBA[4];
+};
+
+static_assert(sizeof(dx_command_clear_render_target_view) == 0x18, "\"dx_command_clear_render_target_view\" struct should have a size of 0x18");
+
+struct dx_command_clear_depth_stencil_view {
+    ID3D11DepthStencilView* pDepthStencilView;
+    UINT ClearFlags;
+    FLOAT Depth;
+    UINT8 Stencil;
+};
+
+static_assert(sizeof(dx_command_clear_depth_stencil_view) == 0x18, "\"dx_command_clear_depth_stencil_view\" struct should have a size of 0x18");
+
+struct dx_command_om_set_render_targets {
+
+};
+
+struct dx_command_rs_set_viewports {
+
+};
+
+struct dx_command_vs_set_shader {
+
+};
+
+struct dx_command_vs_set_constant_buffers {
+
+};
+
+struct dx_command_vs_set_shader_resources {
+
+};
+
+struct dx_command_vs_set_samplers {
+
+};
+
+struct dx_command_ps_set_shader {
+
+};
+
+struct dx_command_ps_set_constant_buffers {
+
+};
+
+struct dx_command_ps_set_shader_resources {
+
+};
+
+struct dx_command_ps_set_samplers {
+
+};
+
+struct dx_command_ia_set_input_layout {
+
+};
+
+struct dx_command_ia_set_vertex_buffers {
+
+};
+
+struct dx_command_ia_set_index_buffer {
+
+};
+
+struct dx_command_ia_set_primitive_topology {
+
+};
+
+struct dx_command_rs_set_state {
+
+};
+
+struct dx_command_om_set_depth_stencil_state {
+
+};
+
+struct dx_command_om_set_blend_state {
+
+};
+
+struct dx_command_draw {
+    UINT VertexCount;
+    UINT StartVertexLocation;
+};
+
+static_assert(sizeof(dx_command_draw) == 0x08, "\"dx_command_draw\" struct should have a size of 0x08");
+
+struct dx_command_draw_indexed {
+    UINT IndexCount;
+    UINT StartIndexLocation;
+    INT BaseVertexLocation;
+};
+
+static_assert(sizeof(dx_command_draw_indexed) == 0x0C, "\"dx_command_draw\" struct should have a size of 0x0C");
+
+struct dx_command_map {
+    ID3D11Resource* pResource;
+    UINT Subresource;
+    D3D11_MAP MapType;
+    UINT MapFlags;
+    UINT Size;
+};
+
+static_assert(sizeof(dx_command_map) == 0x18, "\"dx_command_map\" struct should have a size of 0x18");
+
+struct dx_command_unmap {
+    ID3D11Resource* pResource;
+    UINT Subresource;
+};
+
+static_assert(sizeof(dx_command_unmap) == 0x10, "\"dx_command_unmap\" struct should have a size of 0x10");
+
+struct dx_command_begin {
+
+};
+
+struct dx_command_end {
+
+};
+
+struct dx_command_generate_mips {
+
+};
+
+struct dx_command_copy_resource {
+
+};
+
+struct dx_command_copy_sub_resource_region {
+
+};
+
+struct dx_command_begin_event {
+
+};
+
+struct dx_command_end_event {
+
+};
+
+struct dx_command {
+    dx_command_index index;
+#pragma warning(suppress: 4200)
+    uint8_t data[];
+};
+
+static_assert(sizeof(dx_command) == 0x04, "\"dx_command\" struct should have a size of 0x04");
+
+struct dx_command_array {
+    uint8_t* begin;
+    uint8_t* end;
+    uint8_t* curr;
+
+    template <typename T>
+    inline T& add_command(dx_command_index index, size_t size = 0) {
+        uint8_t* _cmd = curr;
+        uint8_t* cmd_end = curr + sizeof(dx_command) + sizeof(T) + size;
+        if (end >= (uint8_t*)cmd_end)
+            curr = cmd_end;
+        else
+            _cmd = 0;
+
+        dx_command* cmd = (dx_command*)_cmd;
+#pragma warning(suppress: 6011)
+        cmd->index = index;
+        return *(T*)cmd->data;
+    }
+};
+
+static_assert(sizeof(dx_command_array) == 0x18, "\"dx_command_array\" struct should have a size of 0x18");
+
+struct dx_depth_stencil_state {
+    int32_t uses;
+    dx_depth_stencil_state* free_next;
+    ID3D11DepthStencilState* depth_stencil_state;
+};
+
+static_assert(sizeof(dx_depth_stencil_state) == 0x18, "\"dx_depth_stencil_state\" struct should have a size of 0x18");
+
+struct dx_rasterizer_state {
+    int32_t uses;
+    dx_rasterizer_state* free_next;
+    ID3D11RasterizerState* rasterizer_state;
+};
+
+static_assert(sizeof(dx_rasterizer_state) == 0x18, "\"dx_rasterizer_state\" struct should have a size of 0x18");
+
+struct dx_render_target {
+    int32_t uses;
+    dx_render_target* free_next;
+    int32_t num_render_target_views;
+    ID3D11RenderTargetView** render_target_views;
+    ID3D11DepthStencilView* depth_stencil_view;
+    p_dx_texture textures[8];
+};
+
+static_assert(sizeof(dx_render_target) == 0x68, "\"dx_render_target\" struct should have a size of 0x68");
+
+struct dx_texture {
+    int32_t uses;
+    dx_texture* free_next;
+    ID3D11Texture2D* texture;
+    ID3D11ShaderResourceView* resource_view;
+    dx_texture_format format;
+    dx_texture_format internal_format;
+    uint32_t flags;
+    uint32_t width;
+    uint32_t height;
+    uint32_t mip_levels;
+};
+
+static_assert(sizeof(dx_texture) == 0x38, "\"dx_texture\" struct should have a size of 0x38");
+
+struct dx_state {
+    struct dx_command_array* command_array;
+    struct ID3DUserDefinedAnnotation* annot;
+    __crt_locale_pointers* field_10;
+    dx_render_target* default_render_target;
+    dx_state_flags flags;
+    dx_state_update_flags update_flags;
+    dx_render_target* curr_render_target;
+    dx_render_target* render_target;
+    int32_t curr_x;
+    int32_t curr_y;
+    int32_t curr_width;
+    int32_t curr_height;
+    int32_t x;
+    int32_t y;
+    int32_t width;
+    int32_t height;
+    dx_vertex_shader* curr_vs_shader;
+    dx_vertex_shader* vs_shader;
+    dx_pixel_shader* curr_ps_shader;
+    dx_pixel_shader* ps_shader;
+    int32_t vertex_buffer_begin;
+    int32_t vertex_buffer_end;
+    dx_buffer_offset_stride vertex_buffer[12];
+    dx_buffer_offset_stride curr_vertex_buffer[12];
+    __int64 index_buffer_format;
+    dx_buffer* index_buffer;
+    __int64 index_buffer_offset;
+    __int64 curr_index_buffer_format;
+    dx_buffer* curr_index_buffer;
+    __int64 curr_index_buffer_offset;
+    dx_primitive primitive_topology;
+    D3D11_PRIMITIVE_TOPOLOGY curr_primitive_topology;
+    int32_t VSConstantBuffersStartSlot;
+    int32_t VSConstantBuffersEndSlot;
+    dx_buffer* VSConstantBuffers[4];
+    dx_buffer* VSCurrConstantBuffers[4];
+    int32_t VSShaderStartSlot;
+    int32_t VSShaderEndSlot;
+    dx_buffer* VSShaderResources[16];
+    dx_buffer* VSCurrShaderResources[16];
+    int32_t VSTextureStartSlot;
+    int32_t VSTextureEndSlot;
+    dx_texture* VSTextures[16];
+    dx_texture* VSCurrTextures[16];
+    int32_t VSSamplerStartSlot;
+    int32_t VSSamplerEndSlot;
+    dx_sampler_state* VSSamplers[16];
+    dx_sampler_state* VSCurrSamplers[16];
+    int32_t PSConstantBuffersStartSlot;
+    int32_t PSConstantBuffersEndSlot;
+    dx_buffer* PSConstantBuffers[4];
+    dx_buffer* PSCurrConstantBuffers[4];
+    int32_t PSTextureStartSlot;
+    int32_t PSTextureEndSlot;
+    dx_texture* PSTextures[24];
+    dx_texture* PSCurrTextures[24];
+    int32_t PSSamplerStartSlot;
+    int32_t PSSamplerEndSlot;
+    dx_sampler_state* PSSamplers[16];
+    dx_sampler_state* PSCurrSamplers[16];
+    dx_rasterizer_state* RSRasterizerState;
+    dx_rasterizer_state* RSCurrRasterizerState;
+    dx_depth_stencil_state* OMDepthStencilState;
+    dx_depth_stencil_state* OMCurrDepthStencilState;
+    dx_blend_state* OMBlendState;
+    dx_blend_state* OMCurrBlendState;
+};
+
+static_assert(sizeof(dx_state) == 0x8A0, "\"dx_state\" struct should have a size of 0x8A0");
+
 ID3D11Device*& d3d_device = *(ID3D11Device**)0x0000000141148230;
 ID3D11DeviceContext*& d3d_device_context = *(ID3D11DeviceContext**)0x0000000141148238;
 
@@ -260,13 +633,11 @@ void p_dx_state::clear_depth_stencil_view(uint32_t stencil_value, float_t depth_
     if (!ptr->curr_render_target->depth_stencil_view)
         return;
 
-    dx_command* cmd = ptr->command_array->get_next_command(sizeof(dx_command_clear_depth_stencil_view));
-    cmd->type = DX_COMMAND_ClearDepthStencilView;
-    dx_command_clear_depth_stencil_view& clear_depth_stencil_view = *(dx_command_clear_depth_stencil_view*)cmd->data;
-    clear_depth_stencil_view.pDepthStencilView = ptr->curr_render_target->depth_stencil_view;
-    clear_depth_stencil_view.ClearFlags = (clear_stencil ? D3D11_CLEAR_STENCIL : 0) | D3D11_CLEAR_DEPTH;
-    clear_depth_stencil_view.Depth = depth_value;
-    clear_depth_stencil_view.Stencil = (uint8_t)stencil_value;
+    auto& cmd = ptr->command_array->add_command<dx_command_clear_depth_stencil_view>(DX_COMMAND_ClearDepthStencilView);
+    cmd.pDepthStencilView = ptr->curr_render_target->depth_stencil_view;
+    cmd.ClearFlags = (clear_stencil ? D3D11_CLEAR_STENCIL : 0) | D3D11_CLEAR_DEPTH;
+    cmd.Depth = depth_value;
+    cmd.Stencil = (uint8_t)stencil_value;
     enum_or(ptr->flags, DX_STATE_FLAG_2);
 }
 
@@ -274,14 +645,12 @@ void p_dx_state::clear_render_target_view(float_t r, float_t g, float_t b, float
     dx_state__update(ptr);
 
     for (int32_t i = 0; i < ptr->curr_render_target->num_render_target_views; i++) {
-        dx_command* cmd = ptr->command_array->get_next_command(sizeof(dx_command_clear_render_target_view));
-        cmd->type = DX_COMMAND_ClearRenderTargetView;
-        dx_command_clear_render_target_view& clear_render_target_view = *(dx_command_clear_render_target_view*)cmd->data;
-        clear_render_target_view.pRenderTargetView = ptr->curr_render_target->render_target_views[i];
-        clear_render_target_view.ColorRGBA[0] = r;
-        clear_render_target_view.ColorRGBA[1] = g;
-        clear_render_target_view.ColorRGBA[2] = b;
-        clear_render_target_view.ColorRGBA[3] = a;
+        auto& cmd = ptr->command_array->add_command<dx_command_clear_render_target_view>(DX_COMMAND_ClearRenderTargetView);
+        cmd.pRenderTargetView = ptr->curr_render_target->render_target_views[i];
+        cmd.ColorRGBA[0] = r;
+        cmd.ColorRGBA[1] = g;
+        cmd.ColorRGBA[2] = b;
+        cmd.ColorRGBA[3] = a;
     }
     enum_or(ptr->flags, DX_STATE_FLAG_2);
 }
@@ -298,23 +667,19 @@ void p_dx_state::copy_texture_region(p_dx_texture* dst, int32_t dst_x, int32_t d
 void p_dx_state::draw(uint32_t vertex_count, int32_t start_vertex_location) {
     dx_state__update(ptr);
 
-    dx_command* cmd = ptr->command_array->get_next_command(sizeof(dx_command_draw));
-    cmd->type = DX_COMMAND_Draw;
-    dx_command_draw& draw = *(dx_command_draw*)cmd->data;
-    draw.VertexCount = vertex_count;
-    draw.StartVertexLocation = start_vertex_location;
+    auto& cmd = ptr->command_array->add_command<dx_command_draw>(DX_COMMAND_Draw);
+    cmd.VertexCount = vertex_count;
+    cmd.StartVertexLocation = start_vertex_location;
     enum_or(ptr->flags, DX_STATE_FLAG_2);
 }
 
 void p_dx_state::draw_indexed(uint32_t index_count, uint32_t start_index_location, int32_t base_vertex_location) {
     dx_state__update(ptr);
 
-    dx_command* cmd = ptr->command_array->get_next_command(sizeof(dx_command_draw_indexed));
-    cmd->type = DX_COMMAND_DrawIndexed;
-    dx_command_draw_indexed& draw_indexed = *(dx_command_draw_indexed*)cmd->data;
-    draw_indexed.IndexCount = index_count;
-    draw_indexed.StartIndexLocation = start_index_location;
-    draw_indexed.BaseVertexLocation = base_vertex_location;
+    auto& cmd = ptr->command_array->add_command<dx_command_draw_indexed>(DX_COMMAND_DrawIndexed);
+    cmd.IndexCount = index_count;
+    cmd.StartIndexLocation = start_index_location;
+    cmd.BaseVertexLocation = base_vertex_location;
     enum_or(ptr->flags, DX_STATE_FLAG_2);
 }
 
@@ -322,6 +687,16 @@ void p_dx_state::end_event() {
     static void (FASTCALL * p_dx_state__end_event)(p_dx_state * This)
         = (void (FASTCALL*)(p_dx_state * This))0x00000001402C0590;
     p_dx_state__end_event(this);
+}
+
+// Added
+dx_render_target* p_dx_state::get_curr_render_target() {
+    dx_render_target* curr_render_target = ptr->curr_render_target;
+    if (ptr->update_flags & DX_STATE_UPDATE_RENDER_TARGET)
+        curr_render_target = ptr->render_target;
+    if (!curr_render_target)
+        curr_render_target = ptr->default_render_target;
+    return curr_render_target;
 }
 
 p_dx_texture* p_dx_state::get_curr_render_target_textures() {
@@ -375,15 +750,13 @@ void* p_dx_state::map(p_dx_buffer& p_dx_buf, int32_t size) {
     if (!size)
         size = dx_buf->size;
 
-    dx_command* cmd = ptr->command_array->get_next_command(sizeof(dx_command_map) + size);
-    cmd->type = DX_COMMAND_Map;
-    dx_command_map& map = *(dx_command_map*)cmd->data;
-    map.pResource = dx_buf->buffer;
-    map.Subresource = 0;
-    map.MapType = D3D11_MAP_WRITE_DISCARD;
-    map.MapFlags = 0;
-    map.Size = size;
-    return &cmd->data[sizeof(dx_command_map)];
+    auto& cmd = ptr->command_array->add_command<dx_command_map>(DX_COMMAND_Map, size);
+    cmd.pResource = dx_buf->buffer;
+    cmd.Subresource = 0;
+    cmd.MapType = D3D11_MAP_WRITE_DISCARD;
+    cmd.MapFlags = 0;
+    cmd.Size = size;
+    return &cmd + 1;
 
     static p_dx_buffer* (FASTCALL * p_dx_state__map)(p_dx_state* This, p_dx_buffer & p_dx_buf, int32_t size)
         = (p_dx_buffer * (FASTCALL*)(p_dx_state* This, p_dx_buffer & p_dx_buf, int32_t size))0x00000001402C0240;
@@ -629,6 +1002,16 @@ void p_dx_state::set_rasterizer_state(p_dx_rasterizer_state* p_dx_rs) {
     enum_or(ptr->update_flags, DX_STATE_UPDATE_RASTERIZER_STATE);
 }
 
+// Added
+void p_dx_state::set_render_target(dx_render_target* dx_rend_targ) {
+    dx_state* ptr = this->ptr;
+    if (dx_rend_targ)
+        ptr->render_target = dx_rend_targ;
+    else
+        ptr->render_target = ptr->default_render_target;
+    enum_or(ptr->update_flags, DX_STATE_UPDATE_RENDER_TARGET);
+}
+
 void p_dx_state::set_render_target(p_dx_render_target* p_dx_rend_targ) {
     dx_state* ptr = this->ptr;
     if (p_dx_rend_targ->ptr)
@@ -720,11 +1103,9 @@ void p_dx_state::unmap(p_dx_buffer& p_dx_buf) {
     dx_buffer* dx_buf = p_dx_buf.ptr;
     dx_buf->flags &= ~0x01;
     if (dx_buf->flags & 0x02) {
-        dx_command* cmd = ptr->command_array->get_next_command(sizeof(dx_command_unmap));
-        cmd->type = DX_COMMAND_Unmap;
-        dx_command_unmap& unmap = *(dx_command_unmap*)cmd->data;
-        unmap.pResource = dx_buf->buffer;
-        unmap.Subresource = 0;
+        auto& cmd = ptr->command_array->add_command<dx_command_unmap>(DX_COMMAND_Unmap);
+        cmd.pResource = dx_buf->buffer;
+        cmd.Subresource = 0;
     }
     enum_or(ptr->flags, DX_STATE_FLAG_2);
     return;

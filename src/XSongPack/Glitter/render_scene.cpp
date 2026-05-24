@@ -1041,7 +1041,7 @@ namespace Glitter {
 
         ParticleX* particle = rend_group->particle->data.particle;
 
-        obj* obj = objset_info_storage_get_obj(rend_group->object);
+        obj* obj = get_object_header(rend_group->object);
         if (!obj)
             return;
 

@@ -6,6 +6,7 @@
 #include "disp_manager.hpp"
 #include "../../KKdLib/hash.hpp"
 #include "../../MMPlusModsShared/camera.hpp"
+#include "../../MMPlusModsShared/dx_buffer_object.hpp"
 #include "../../MMPlusModsShared/matrix_stack.hpp"
 #include "../../MMPlusModsShared/render_context.hpp"
 #include "../../MMPlusModsShared/render_manager.hpp"
@@ -793,9 +794,9 @@ namespace mdl {
         rend_data_ctx.uniform_value_reset();
     }
 
-    void DispManager::entry_obj(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
-        obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color,
-        const mat4* bone_mat, const ::obj* obj_morph, obj_mesh_vertex_buffer* obj_morph_vert_buf,
+    void DispManager::entry_obj(const ::obj* obj, const mat4& mat, VertexBuffer* obj_vert_buf,
+        IndexBuffer* obj_index_buf, const texture** textures, const vec4* blend_color,
+        const mat4* bone_mat, const ::obj* obj_morph, VertexBuffer* obj_morph_vert_buf,
         float_t morph_value, int32_t instances_count, const mat4* instances_mat, int64_t a13,
         int64_t a14, draw_func func, const ObjSubMeshArgs* func_data, bool enable_bone_mat) {
         disp_manager->culling.passed.objects++;
@@ -804,12 +805,12 @@ namespace mdl {
         texture_transform_struct* texture_transform_array = 0;
 
         static int32_t(FASTCALL* obj_bounding_sphere_check_visibility)(
-            const obj_bounding_sphere& sphere, const mat4 mat) = (int32_t(FASTCALL*)(
-                const obj_bounding_sphere & sphere, const mat4 mat))0x000000014045DFC0;
+            const BSphere& sphere, const mat4 mat) = (int32_t(FASTCALL*)(
+                const BSphere & sphere, const mat4 mat))0x000000014045DFC0;
 
         static int32_t(FASTCALL* obj_axis_aligned_bounding_box_check_visibility)(
-            const obj_axis_aligned_bounding_box * aabb, const mat4 mat) = (int32_t(FASTCALL*)(
-                const obj_axis_aligned_bounding_box * aabb, const mat4 mat))0x000000014045E0B0;
+            const AABB * aabb, const mat4 mat) = (int32_t(FASTCALL*)(
+                const AABB * aabb, const mat4 mat))0x000000014045E0B0;
 
         for (int32_t i = 0; i < obj->num_mesh; i++) {
             const obj_mesh* mesh = &obj->mesh_array[i];
@@ -823,30 +824,27 @@ namespace mdl {
             }
 
             if (disp_manager->object_culling && !instances_count && !bone_mat
-                && !obj_bounding_sphere_check_visibility(mesh->bounding_sphere, mat)
-                && (!mesh_morph || !obj_bounding_sphere_check_visibility(
-                    mesh_morph->bounding_sphere, mat))) {
+                && !obj_bounding_sphere_check_visibility(mesh->bsphere, mat)
+                && (!mesh_morph || !obj_bounding_sphere_check_visibility(mesh_morph->bsphere, mat))) {
                 disp_manager->culling.culled.meshes++;
                 continue;
             }
             disp_manager->culling.passed.meshes++;
 
-            int32_t translucent_priority_count = 0;
+            int32_t alpha_prio_count = 0;
 
             for (int32_t j = 0; j < mesh->num_submesh; j++) {
                 const obj_sub_mesh* sub_mesh = &mesh->submesh_array[j];
                 const obj_sub_mesh* sub_mesh_morph = 0;
-                if (sub_mesh->attrib.m.cloth)
+                if (sub_mesh->attrib.m.hide)
                     continue;
 
                 if (disp_manager->object_culling && !instances_count && !bone_mat) {
-                    int32_t v47 = obj_bounding_sphere_check_visibility(
-                        sub_mesh->bounding_sphere, mat);
-                    if (v47 != 2 || (!mesh->attrib.m.billboard && !mesh->attrib.m.billboard_y_axis
+                    int32_t v47 = obj_bounding_sphere_check_visibility(sub_mesh->bsphere, mat);
+                    if (v47 != 2 || (!mesh->attrib.m.billboard_view && !mesh->attrib.m.billboard
                         && !mesh->attrib.m.disable_aabb_culling)) {
                         if (v47 == 2)
-                            v47 = obj_axis_aligned_bounding_box_check_visibility(
-                                sub_mesh->axis_aligned_bounding_box, mat);
+                            v47 = obj_axis_aligned_bounding_box_check_visibility(sub_mesh->aabb, mat);
 
                         if (!v47) {
                             if (!mesh_morph || j >= mesh_morph->num_submesh) {
@@ -860,11 +858,9 @@ namespace mdl {
                                 continue;
                             }
 
-                            int32_t v56 = obj_bounding_sphere_check_visibility(
-                                sub_mesh_morph->bounding_sphere, mat);
+                            int32_t v56 = obj_bounding_sphere_check_visibility(sub_mesh_morph->bsphere, mat);
                             if (v56 == 2)
-                                v56 = obj_axis_aligned_bounding_box_check_visibility(
-                                    sub_mesh_morph->axis_aligned_bounding_box, mat);
+                                v56 = obj_axis_aligned_bounding_box_check_visibility(sub_mesh_morph->aabb, mat);
 
                             if (!v56) {
                                 disp_manager->culling.culled.sub_meshes++;
@@ -1007,7 +1003,7 @@ namespace mdl {
                     _emission = material->material.color.emission;
                 }
 
-                data->init_sub_mesh(mat, obj->bounding_sphere.radius, sub_mesh, mesh, material,
+                data->init_sub_mesh(mat, obj->bsphere.radius, sub_mesh, mesh, material,
                     textures, num_bone_index, mats, vertex_buffer, vertex_buffer_offset, index_buffer,
                     _blend_color, _emission, morph_vertex_buffer, morph_vertex_buffer_offset,
                     morph_value, disp_manager->texture_pattern_count, texture_pattern_array,
@@ -1028,15 +1024,15 @@ namespace mdl {
                 if ((obj_flags & mdl::OBJ_ALPHA_ORDER) && data->args.sub_mesh.ptr->blend_color.w < 1.0f) {
                     if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY)) {
                         bool translucent = false;
-                        if (!attrib.flag_28 && (!attrib.punch_through
+                        if (!attrib.ignore_alpha && (!attrib.punch_through
                             && (attrib.alpha_texture || attrib.alpha_material)
-                            || sub_mesh->attrib.m.translucent)) {
+                            || sub_mesh->attrib.m.vertex_alpha)) {
                             if (!sub_1402C1CF0() || !material->material.adjust_param.m.force_opaque)
                                 translucent = true;
                         }
 
                         if (translucent) {
-                            if (!attrib.translucent_priority) {
+                            if (!attrib.alpha_prio) {
                                 if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_GLITTER)
                                     entry_list(OBJ_TYPE_TRANSLUCENT_ALPHA_ORDER_POST_GLITTER, data);
                                 else if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_TRANSLUCENT)
@@ -1044,8 +1040,8 @@ namespace mdl {
                                 else
                                     entry_list(OBJ_TYPE_TRANSLUCENT_ALPHA_ORDER_POST_OPAQUE, data);
                             }
-                            else if (translucent_priority_count < 40)
-                                disp_manager->translucent_objects[translucent_priority_count++] = data->args.sub_mesh.ptr;
+                            else if (alpha_prio_count < 40)
+                                disp_manager->translucent_objects[alpha_prio_count++] = data->args.sub_mesh.ptr;
                         }
                         else {
                             if (attrib.punch_through) {
@@ -1070,9 +1066,9 @@ namespace mdl {
                         }
                     }
                 }
-                else if (!attrib.flag_28 && (data->args.sub_mesh.ptr->blend_color.w < 1.0f
+                else if (!attrib.ignore_alpha && (data->args.sub_mesh.ptr->blend_color.w < 1.0f
                     || !attrib.punch_through && attrib.alpha_texture | attrib.alpha_material
-                    || sub_mesh->attrib.m.translucent)) {
+                    || sub_mesh->attrib.m.vertex_alpha)) {
                     if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY)) {
                         if (!sub_1402C1CF0() || !material->material.adjust_param.m.force_opaque) {
                             if (sub_1402C1CF0() && material->material.adjust_param.m.before_punch
@@ -1081,15 +1077,15 @@ namespace mdl {
                                 continue;
                             }
 
-                            if (!attrib.translucent_priority)
-                                if (mesh->attrib.m.translucent_sort_by_radius
+                            if (!attrib.alpha_prio)
+                                if (mesh->attrib.m.around_obj
                                     || obj_flags & mdl::OBJ_TRANSLUCENT_SORT_BY_RADIUS) {
                                     entry_list(OBJ_TYPE_TRANSLUCENT_SORT_BY_RADIUS, data);
                                 }
                                 else
                                     entry_list(OBJ_TYPE_TRANSLUCENT, data);
-                            else if (translucent_priority_count < 40)
-                                disp_manager->translucent_objects[translucent_priority_count++] = data->args.sub_mesh.ptr;
+                            else if (alpha_prio_count < 40)
+                                disp_manager->translucent_objects[alpha_prio_count++] = data->args.sub_mesh.ptr;
                         }
                     }
                 }
@@ -1152,15 +1148,15 @@ namespace mdl {
                     entry_list(OBJ_TYPE_USER, data);
             }
 
-            if (translucent_priority_count <= 0)
+            if (alpha_prio_count <= 0)
                 continue;
 
             ObjTranslucentArgs translucent_args;
             translucent_args.count = 0;
             for (int32_t j = 62; j; j--)
-                for (int32_t k = 0; k < translucent_priority_count; k++) {
+                for (int32_t k = 0; k < alpha_prio_count; k++) {
                     ObjSubMeshArgs* sub_mesh = disp_manager->translucent_objects[k];
-                    if (sub_mesh->material->material.attrib.m.translucent_priority != j)
+                    if (sub_mesh->material->material.attrib.m.alpha_prio != j)
                         continue;
 
                     translucent_args.sub_mesh[translucent_args.count] = sub_mesh;
@@ -1209,9 +1205,9 @@ namespace mdl {
             }
 
             if (disp_manager->object_culling && !instances_count && !bone_mat
-                && !obj_bounding_sphere_check_visibility(mesh->bounding_sphere, _mat)) {
+                && !obj_bounding_sphere_check_visibility(mesh->bsphere, _mat)) {
                 if (mesh_morph) {
-                    if (!obj_bounding_sphere_check_visibility(mesh_morph->bounding_sphere, _mat)) {
+                    if (!obj_bounding_sphere_check_visibility(mesh_morph->bsphere, _mat)) {
                         disp_manager->culling.culled.meshes++;
                         continue;
                     }
@@ -1223,24 +1219,22 @@ namespace mdl {
             }
             disp_manager->culling.passed.meshes++;
 
-            int32_t translucent_priority_count = 0;
+            int32_t alpha_prio_count = 0;
 
             for (int32_t j = 0; j < mesh->num_submesh; j++) {
                 const obj_sub_mesh* sub_mesh = &mesh->submesh_array[j];
                 const obj_sub_mesh* sub_mesh_morph = 0;
-                if (sub_mesh->attrib.m.cloth || sub_mesh->attrib.m.no_reflect
+                if (sub_mesh->attrib.m.hide || sub_mesh->attrib.m.no_reflect
                     || !mdl::obj_reflect_enable && !sub_mesh->attrib.m.reflect
                     || camera_front && sub_mesh->attrib.m.reflect_cam_back)
                     continue;
 
                 if (disp_manager->object_culling && !instances_count && !bone_mat) {
-                    int32_t v47 = obj_bounding_sphere_check_visibility(
-                        sub_mesh->bounding_sphere, _mat);
-                    if (v47 != 2 || (!mesh->attrib.m.billboard && !mesh->attrib.m.billboard_y_axis
+                    int32_t v47 = obj_bounding_sphere_check_visibility(sub_mesh->bsphere, _mat);
+                    if (v47 != 2 || (!mesh->attrib.m.billboard_view && !mesh->attrib.m.billboard
                         && !mesh->attrib.m.disable_aabb_culling)) {
                         if (v47 == 2)
-                            v47 = obj_axis_aligned_bounding_box_check_visibility(
-                                sub_mesh->axis_aligned_bounding_box, _mat);
+                            v47 = obj_axis_aligned_bounding_box_check_visibility(sub_mesh->aabb, _mat);
 
                         if (!v47) {
                             if (!mesh_morph || j >= mesh_morph->num_submesh) {
@@ -1254,11 +1248,9 @@ namespace mdl {
                                 continue;
                             }
 
-                            int32_t v56 = obj_bounding_sphere_check_visibility(
-                                sub_mesh_morph->bounding_sphere, _mat);
+                            int32_t v56 = obj_bounding_sphere_check_visibility(sub_mesh_morph->bsphere, _mat);
                             if (v56 == 2)
-                                v56 = obj_axis_aligned_bounding_box_check_visibility(
-                                    sub_mesh_morph->axis_aligned_bounding_box, _mat);
+                                v56 = obj_axis_aligned_bounding_box_check_visibility(sub_mesh_morph->aabb, _mat);
 
                             if (!v56) {
                                 disp_manager->culling.culled.sub_meshes++;
@@ -1401,7 +1393,7 @@ namespace mdl {
                     _emission = material->material.color.emission;
                 }
 
-                data->init_sub_mesh(mat, obj->bounding_sphere.radius, sub_mesh, mesh, material,
+                data->init_sub_mesh(mat, obj->bsphere.radius, sub_mesh, mesh, material,
                     textures, num_bone_index, mats, vertex_buffer, vertex_buffer_offset, index_buffer,
                     _blend_color, _emission, morph_vertex_buffer, morph_vertex_buffer_offset,
                     morph_value, disp_manager->texture_pattern_count, texture_pattern_array,
@@ -1410,24 +1402,24 @@ namespace mdl {
 
                 const ObjFlags obj_flags = disp_manager->obj_flags;
                 const obj_material_attrib_member attrib = material->material.attrib.m;
-                if (!attrib.flag_28 && (data->args.sub_mesh.ptr->blend_color.w < 1.0f
+                if (!attrib.ignore_alpha && (data->args.sub_mesh.ptr->blend_color.w < 1.0f
                     || !attrib.punch_through && attrib.alpha_texture | attrib.alpha_material
-                    || sub_mesh->attrib.m.translucent)) {
+                    || sub_mesh->attrib.m.vertex_alpha)) {
                     if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY)) {
                         if (!sub_1402C1CF0() || !material->material.adjust_param.m.force_opaque) {
                             if (sub_1402C1CF0() && material->material.adjust_param.m.before_punch
                                 && (sub_1402C1D50() || sub_1402C1D60()))
                                 continue;
 
-                            if (!attrib.translucent_priority)
-                                if (mesh->attrib.m.translucent_sort_by_radius
+                            if (!attrib.alpha_prio)
+                                if (mesh->attrib.m.around_obj
                                     || obj_flags & mdl::OBJ_TRANSLUCENT_SORT_BY_RADIUS) {
                                     entry_list(OBJ_TYPE_REFLECT_TRANSLUCENT_SORT_BY_RADIUS, data);
                                 }
                                 else
                                     entry_list(OBJ_TYPE_REFLECT_TRANSLUCENT, data);
-                            else if (translucent_priority_count < 40)
-                                disp_manager->translucent_objects[translucent_priority_count++] = data->args.sub_mesh.ptr;
+                            else if (alpha_prio_count < 40)
+                                disp_manager->translucent_objects[alpha_prio_count++] = data->args.sub_mesh.ptr;
                         }
                     }
                 }
@@ -1441,15 +1433,15 @@ namespace mdl {
                 }
             }
 
-            if (translucent_priority_count <= 0)
+            if (alpha_prio_count <= 0)
                 continue;
 
             ObjTranslucentArgs translucent_args;
             translucent_args.count = 0;
             for (int32_t j = 62; j; j--)
-                for (int32_t k = 0; k < translucent_priority_count; k++) {
+                for (int32_t k = 0; k < alpha_prio_count; k++) {
                     ObjSubMeshArgs* sub_mesh = disp_manager->translucent_objects[k];
-                    if (sub_mesh->material->material.attrib.m.translucent_priority != j)
+                    if (sub_mesh->material->material.attrib.m.alpha_prio != j)
                         continue;
 
                     translucent_args.sub_mesh[translucent_args.count] = sub_mesh;
@@ -1464,31 +1456,31 @@ namespace mdl {
         }
     }
 
-    void DispManager::entry_obj_screen(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
-        obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color) {
+    void DispManager::entry_obj_screen(const ::obj* obj, const mat4& mat, VertexBuffer* obj_vert_buf,
+        IndexBuffer* obj_index_buf, const texture** textures, const vec4* blend_color) {
         disp_manager->culling.passed.objects++;
 
         texture_pattern_struct* texture_pattern_array = 0;
         texture_transform_struct* texture_transform_array = 0;
 
         static int32_t(FASTCALL * obj_bounding_sphere_check_visibility)(
-            const obj_bounding_sphere & sphere, const mat4 mat) = (int32_t(FASTCALL*)(
-                const obj_bounding_sphere & sphere, const mat4 mat))0x000000014045DFC0;
+            const BSphere & sphere, const mat4 mat) = (int32_t(FASTCALL*)(
+                const BSphere & sphere, const mat4 mat))0x000000014045DFC0;
 
         static int32_t(FASTCALL * obj_axis_aligned_bounding_box_check_visibility)(
-            const obj_axis_aligned_bounding_box * aabb, const mat4 mat) = (int32_t(FASTCALL*)(
-                const obj_axis_aligned_bounding_box * aabb, const mat4 mat))0x000000014045E0B0;
+            const AABB * aabb, const mat4 mat) = (int32_t(FASTCALL*)(
+                const AABB * aabb, const mat4 mat))0x000000014045E0B0;
 
         for (int32_t i = 0; i < obj->num_mesh; i++) {
             const obj_mesh* mesh = &obj->mesh_array[i];
 
             disp_manager->culling.passed.meshes++;
 
-            int32_t translucent_priority_count = 0;
+            int32_t alpha_prio_count = 0;
 
             for (int32_t j = 0; j < mesh->num_submesh; j++) {
                 const obj_sub_mesh* sub_mesh = &mesh->submesh_array[j];
-                if (sub_mesh->attrib.m.cloth)
+                if (sub_mesh->attrib.m.hide)
                     continue;
 
                 disp_manager->culling.passed.sub_meshes++;
@@ -1536,7 +1528,7 @@ namespace mdl {
                     _blend_color = *blend_color;
                 vec4 _emission = material->material.color.emission;
 
-                data->init_sub_mesh(mat, obj->bounding_sphere.radius, sub_mesh, mesh, material,
+                data->init_sub_mesh(mat, obj->bsphere.radius, sub_mesh, mesh, material,
                     textures, 0, 0, vertex_buffer, vertex_buffer_offset, index_buffer,
                     _blend_color, _emission, 0, 0, 0.0f, disp_manager->texture_pattern_count, texture_pattern_array,
                     disp_manager->texture_transform_count, texture_transform_array, 0, 0, 0, 0, 0, 0, 0);
@@ -1555,22 +1547,22 @@ namespace mdl {
                 if ((obj_flags & mdl::OBJ_ALPHA_ORDER) && data->args.sub_mesh.ptr->blend_color.w < 1.0f) {
                     if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY)) {
                         bool translucent = false;
-                        if (!attrib.flag_28 && (!attrib.punch_through
+                        if (!attrib.ignore_alpha && (!attrib.punch_through
                             && (attrib.alpha_texture || attrib.alpha_material)
-                            || sub_mesh->attrib.m.translucent)) {
+                            || sub_mesh->attrib.m.vertex_alpha)) {
                             if (!sub_1402C1CF0() || !material->material.adjust_param.m.force_opaque)
                                 translucent = true;
                         }
 
                         if (translucent) {
-                            if (!attrib.translucent_priority) {
+                            if (!attrib.alpha_prio) {
                                 if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_GLITTER);
                                 else if (obj_flags & mdl::OBJ_ALPHA_ORDER_POST_TRANSLUCENT)
                                     entry_list(OBJ_TYPE_SCREEN_TRANSLUCENT_ALPHA_ORDER_POST_TRANSLUCENT, data);
                                 else;
                             }
-                            else if (translucent_priority_count < 40)
-                                disp_manager->translucent_objects[translucent_priority_count++] = data->args.sub_mesh.ptr;
+                            else if (alpha_prio_count < 40)
+                                disp_manager->translucent_objects[alpha_prio_count++] = data->args.sub_mesh.ptr;
                         }
                         else {
                             if (attrib.punch_through) {
@@ -1588,22 +1580,22 @@ namespace mdl {
                         }
                     }
                 }
-                else if (!attrib.flag_28 && (data->args.sub_mesh.ptr->blend_color.w < 1.0f
+                else if (!attrib.ignore_alpha && (data->args.sub_mesh.ptr->blend_color.w < 1.0f
                     || !attrib.punch_through && attrib.alpha_texture | attrib.alpha_material
-                    || sub_mesh->attrib.m.translucent)) {
+                    || sub_mesh->attrib.m.vertex_alpha)) {
                     if (!(obj_flags & mdl::OBJ_NO_TRANSLUCENCY)) {
                         if (!sub_1402C1CF0() || !material->material.adjust_param.m.force_opaque) {
                             if (sub_1402C1CF0() && material->material.adjust_param.m.before_punch
                                 && (sub_1402C1D50() || sub_1402C1D60()))
                                 continue;
 
-                            if (!attrib.translucent_priority)
-                                if (mesh->attrib.m.translucent_sort_by_radius
+                            if (!attrib.alpha_prio)
+                                if (mesh->attrib.m.around_obj
                                     || obj_flags & mdl::OBJ_TRANSLUCENT_SORT_BY_RADIUS);
                                 else
                                     entry_list(OBJ_TYPE_SCREEN_TRANSLUCENT, data);
-                            else if (translucent_priority_count < 40)
-                                disp_manager->translucent_objects[translucent_priority_count++] = data->args.sub_mesh.ptr;
+                            else if (alpha_prio_count < 40)
+                                disp_manager->translucent_objects[alpha_prio_count++] = data->args.sub_mesh.ptr;
                         }
                     }
                 }
@@ -1620,15 +1612,15 @@ namespace mdl {
                 }
             }
 
-            if (translucent_priority_count <= 0)
+            if (alpha_prio_count <= 0)
                 continue;
 
             ObjTranslucentArgs translucent_args;
             translucent_args.count = 0;
             for (int32_t j = 62; j; j--)
-                for (int32_t k = 0; k < translucent_priority_count; k++) {
+                for (int32_t k = 0; k < alpha_prio_count; k++) {
                     ObjSubMeshArgs* sub_mesh = disp_manager->translucent_objects[k];
-                    if (sub_mesh->material->material.attrib.m.translucent_priority != j)
+                    if (sub_mesh->material->material.attrib.m.alpha_prio != j)
                         continue;
 
                     translucent_args.sub_mesh[translucent_args.count] = sub_mesh;
@@ -1652,7 +1644,7 @@ namespace mdl {
         = (int32_t(FASTCALL*)(const ::obj * obj, const mat4 * bone_mat, const mat4 * mat))0x000000014045DFA0;
 
     void DispManager::entry_obj_by_obj(const ::obj* obj, const texture** textures,
-        obj_mesh_vertex_buffer* obj_vert_buf, obj_mesh_index_buffer* obj_index_buf,
+        VertexBuffer* obj_vert_buf, IndexBuffer* obj_index_buf,
         const mat4* bone_mat, float_t alpha) {
         if (!obj)
             return;
@@ -1716,7 +1708,7 @@ namespace mdl {
             return;
 
         ::obj* obj_morph = 0;
-        obj_mesh_vertex_buffer* obj_morph_vert_buf = 0;
+        VertexBuffer* obj_morph_vert_buf = 0;
         if (disp_manager->morph.object.not_null()) {
             object_info_cache morph_obj_info_cache;
             if (morph_obj_info_cache.get(disp_manager->morph.object)) {
@@ -1727,8 +1719,8 @@ namespace mdl {
         }
 
         const texture** textures = obj_info_cache.get_textures(disp_manager->field_C78);
-        obj_mesh_index_buffer* obj_mesh_index_buffers = obj_info_cache.get_obj_mesh_index_buffers();
-        obj_mesh_vertex_buffer* obj_mesh_vertex_buffers = obj_info_cache.get_obj_mesh_vertex_buffers();
+        IndexBuffer* obj_mesh_index_buffers = obj_info_cache.get_obj_mesh_index_buffers();
+        VertexBuffer* obj_mesh_vertex_buffers = obj_info_cache.get_obj_mesh_vertex_buffers();
         entry_obj(obj, mat, obj_mesh_vertex_buffers, obj_mesh_index_buffers, textures,
             blend_color, bone_mat, obj_morph, obj_morph_vert_buf, disp_manager->morph.weight,
             instances_count, instances_mat, 0, 0, func, func_data, enable_bone_mat);
@@ -1741,8 +1733,8 @@ namespace mdl {
             return;
 
         const texture** textures = obj_info_cache.get_textures(disp_manager->field_C78);
-        obj_mesh_index_buffer* obj_mesh_index_buffers = obj_info_cache.get_obj_mesh_index_buffers();
-        obj_mesh_vertex_buffer* obj_mesh_vertex_buffers = obj_info_cache.get_obj_mesh_vertex_buffers();
+        IndexBuffer* obj_mesh_index_buffers = obj_info_cache.get_obj_mesh_index_buffers();
+        VertexBuffer* obj_mesh_vertex_buffers = obj_info_cache.get_obj_mesh_vertex_buffers();
         entry_obj_screen(obj, mat, obj_mesh_vertex_buffers, obj_mesh_index_buffers, textures, blend_color);
     }
 
@@ -2073,7 +2065,7 @@ namespace mdl {
     }
 
     HOOK(void, FASTCALL, DispManager__entry_obj_by_obj, 0x000000014045B230, ::obj* obj, const texture** textures,
-        obj_mesh_vertex_buffer* obj_vert_buf, obj_mesh_index_buffer* obj_index_buf, mat4* bone_mat, float_t alpha) {
+        VertexBuffer* obj_vert_buf, IndexBuffer* obj_index_buf, mat4* bone_mat, float_t alpha) {
         DispManager::entry_obj_by_obj(obj, textures, obj_vert_buf, obj_index_buf, bone_mat, alpha);
     }
 
@@ -2085,9 +2077,9 @@ namespace mdl {
     }
 
     HOOK(void, FASTCALL, DispManager__entry_obj, 0x000000014045C580, ::obj* obj, mat4& mat,
-        obj_mesh_vertex_buffer* obj_vert_buf, obj_mesh_index_buffer* obj_index_buf, const texture** textures,
+        VertexBuffer* obj_vert_buf, IndexBuffer* obj_index_buf, const texture** textures,
         const vec4* blend_color, const mat4* bone_mat, ::obj* obj_morph,
-        obj_mesh_vertex_buffer* obj_morph_vert_buf, float_t morph_value,
+        VertexBuffer* obj_morph_vert_buf, float_t morph_value,
         int32_t instances_count, const mat4* instances_mat, __int64 a13, __int64 a14,
         draw_func func, const ObjSubMeshArgs* func_data, bool enable_bone_mat) {
         DispManager::entry_obj(obj, mat, obj_vert_buf, obj_index_buf, textures,

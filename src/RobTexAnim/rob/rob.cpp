@@ -27,8 +27,8 @@ HOOK(void, FASTCALL, TaskRobLoad__UnloadCharaItem, 0x0000000158003D10, // 0x0000
 
     for (const int32_t& i : *item_objset)
         if (i != -1) {
-            objset_info_storage_unload_set(i, a3);
-            auth_3d_data_unload_category(object_database_get_set_name(i, -1));
+            free_objset(i, a3);
+            auth_3d_data_unload_category(get_objset_name(i, -1));
         }
 }
 
@@ -44,8 +44,8 @@ HOOK(void, FASTCALL, TaskRobLoad__LoadCharaItem, 0x0000000157FE7AC0, // 0x000000
 
     for (const int32_t& i : *item_objset)
         if (i != -1) {
-            objset_info_storage_load_set(i, a3);
-            auth_3d_data_load_category(object_database_get_set_name(i, -1));
+            request_objset(i, a3);
+            auth_3d_data_load_category(get_objset_name(i, -1));
         }
 }
 
@@ -60,8 +60,8 @@ HOOK(bool, FASTCALL, TaskRobLoad__LoadCharaItemCheckNotRead, 0x00000001404E4300,
         return true;
 
     for (const int32_t& i : *item_objset)
-        if (i != -1 && objset_info_storage_load_obj_set_check_not_read(i)) {
-            if (auth_3d_data_check_category_loaded(object_database_get_set_name(i, -1)))
+        if (i != -1 && wait_objset(i)) {
+            if (auth_3d_data_check_category_loaded(get_objset_name(i, -1)))
                 return true;
         }
     return false;
@@ -88,7 +88,7 @@ HOOK(void, FASTCALL, rob_chara_item_equip_object_ctrl, 0x0000000140590560, rob_c
 
     if (itm_eq_obj->auth_obj_index == -1
         && (*(auth_3d_id*)&itm_eq_obj->auth_3d_id).check_loaded()) {
-        const char* obj_name = object_database_get_obj_name(itm_eq_obj->obj_info);
+        const char* obj_name = get_objdb_object_name(itm_eq_obj->obj_info);
 
         auth_3d* auth = (*(auth_3d_id*)&itm_eq_obj->auth_3d_id).get_auth_3d();
         for (auth_3d_object& i : auth->object)
@@ -171,7 +171,7 @@ HOOK(bool, FASTCALL, rob_chara_item_equip_object__init_members, 0x00000001594031
 
 HOOK(bool, FASTCALL, rob_chara_item_equip_object_load_object_info_ex_data, 0x00000001594454F0, // 0x0000000140590940
     rob_chara_item_equip_object* itm_eq_obj, uint32_t obj_info, bone_node* bone_nodes, bool osage_reset) {
-    auth_3d_id id(object_database_get_set_name((*(object_info*)&obj_info).set_id, -1));
+    auth_3d_id id(get_objset_name((*(object_info*)&obj_info).set_id, -1));
     if (id.check_not_empty()) {
         id.read_file();
         id.set_enable(true);

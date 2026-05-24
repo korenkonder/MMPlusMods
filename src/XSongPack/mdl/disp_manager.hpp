@@ -426,7 +426,7 @@ namespace mdl {
         float_t wet_param;
         int32_t texture_transform_count;
         texture_transform_struct texture_transform_array[24];
-        bool(FASTCALL* culling_func)(const obj_bounding_sphere*, const mat4*);
+        bool(FASTCALL* culling_func)(const BSphere*, const mat4*);
         ObjSubMeshArgs* translucent_objects[40];
         int32_t field_C78;
 
@@ -454,20 +454,20 @@ namespace mdl {
         static void entry_list(ObjType type, ObjData* data);
         static void entry_list(ObjTypeScreen type, ObjData* data);
         static void entry_list(ObjTypeReflect type, ObjData* data);
-        static void entry_obj(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
-            obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0,
-            const mat4* bone_mat = 0, const ::obj* obj_morph = 0, obj_mesh_vertex_buffer* obj_morph_vert_buf = 0,
+        static void entry_obj(const ::obj* obj, const mat4& mat, VertexBuffer* obj_vert_buf,
+            IndexBuffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0,
+            const mat4* bone_mat = 0, const ::obj* obj_morph = 0, VertexBuffer* obj_morph_vert_buf = 0,
             float_t morph_value = 0.0f, int32_t instances_count = 0, const mat4* instances_mat = 0, int64_t a13 = 0,
             int64_t a14 = 0, draw_func func = 0, const ObjSubMeshArgs* func_data = 0, bool enable_bone_mat = false);
-        static void entry_obj_screen(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
-            obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0);
-        static void entry_obj_reflect(const ::obj* obj, const mat4& mat, obj_mesh_vertex_buffer* obj_vert_buf,
-            obj_mesh_index_buffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0,
-            const mat4* bone_mat = 0, const ::obj* obj_morph = 0, obj_mesh_vertex_buffer* obj_morph_vert_buf = 0,
+        static void entry_obj_screen(const ::obj* obj, const mat4& mat, VertexBuffer* obj_vert_buf,
+            IndexBuffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0);
+        static void entry_obj_reflect(const ::obj* obj, const mat4& mat, VertexBuffer* obj_vert_buf,
+            IndexBuffer* obj_index_buf, const texture** textures, const vec4* blend_color = 0,
+            const mat4* bone_mat = 0, const ::obj* obj_morph = 0, VertexBuffer* obj_morph_vert_buf = 0,
             float_t morph_value = 0.0f, int32_t instances_count = 0, const mat4* instances_mat = 0, int64_t a13 = 0,
             int64_t a14 = 0, draw_func func = 0, const ObjSubMeshArgs* func_data = 0, bool enable_bone_mat = false);
         static void entry_obj_by_obj(const ::obj* obj, const texture** textures,
-            obj_mesh_vertex_buffer* obj_vert_buf, obj_mesh_index_buffer* obj_index_buf,
+            VertexBuffer* obj_vert_buf, IndexBuffer* obj_index_buf,
             const mat4* bone_mat, float_t alpha);
         static void entry_obj_by_object_info(object_info obj_info, const vec4* blend_color = 0,
             const mat4* bone_mat = 0, int32_t instances_count = 0, const mat4* instances_mat = 0,

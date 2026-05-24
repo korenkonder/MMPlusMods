@@ -147,7 +147,7 @@ HOOK(void, FASTCALL, auth_3d_parse, 0x00000001402D7200, auth_3d* auth) {
 
                 const firstread_auth_3d_object* frg_a3d_obj = &frg_auth_3d->object_array[j];
                 k.uid_name.assign(frg_a3d_obj->uid_name);
-                k.object_info = object_database_get_object_info(frg_a3d_obj->uid_name);
+                k.object_info = get_objdb_object_uid(frg_a3d_obj->uid_name);
 
                 k.reflect = k.uid_name.find("_REFLECT") != -1;
                 k.refract = k.uid_name.find("_REFRACT") != -1;

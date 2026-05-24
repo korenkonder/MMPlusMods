@@ -8,12 +8,12 @@
 #include "pv_game/firstread.hpp"
 #include <Helpers.h>
 
-static int32_t load_set_id;
+static int32_t load_objset_index;
 
-HOOK(bool, FASTCALL, _objset_info_storage_load_obj_set_check_not_read, 0x0000000140467110, int32_t set) {
-    load_set_id = set;
-    bool ret = original_objset_info_storage_load_obj_set_check_not_read(set);
-    load_set_id = -1;
+HOOK(bool, FASTCALL, wait_objset, 0x0000000140467110, int32_t objset_index) {
+    load_objset_index = objset_index;
+    bool ret = originalwait_objset(objset_index);
+    load_objset_index = -1;
     return ret;
 }
 
@@ -23,12 +23,12 @@ HOOK(obj_set*, FASTCALL, obj_set_parse_file, 0x000000014046A360,
 
     extern bool reflect_full;
     extern const firstread* firstread_ptr;
-    if (reflect_full && firstread_ptr && firstread_ptr->objset_array && load_set_id != -1) {
+    if (reflect_full && firstread_ptr && firstread_ptr->objset_array && load_objset_index != -1) {
         const firstread_objset_array* objset_array = firstread_ptr->objset_array;
         if (objset_array->objset_id_array && objset_array->objset_array) {
             const uint32_t num_objset = objset_array->num_objset;
             for (uint32_t i = 0; i < num_objset; i++) {
-                if (objset_array->objset_id_array[i] != load_set_id || !objset_array->objset_array[i].data)
+                if (objset_array->objset_id_array[i] != load_objset_index || !objset_array->objset_array[i].data)
                     continue;
 
                 const firstread_objset* frb_set = firstread_objset::read(alloc,
@@ -63,7 +63,7 @@ HOOK(obj_set*, FASTCALL, obj_set_parse_file, 0x000000014046A360,
                                     const firstread_obj_mesh* frb_mesh = &frb_obj->mesh_array[l];
                                     if (frb_mesh->remove) {
                                         mesh->flags = 0;
-                                        mesh->bounding_sphere = {};
+                                        mesh->bsphere = {};
                                         mesh->num_submesh = 0;
                                         mesh->submesh_array = 0;
                                         mesh->vertex_format = (obj_vertex_format)0;
@@ -117,7 +117,7 @@ HOOK(obj_set*, FASTCALL, obj_set_parse_file, 0x000000014046A360,
                                                 if (split->material_index[0] != -1)
                                                     submesh->material_index = split->material_index[0];
                                                 if (split->num_index[0] && split->index_array[0]) {
-                                                    submesh->bounding_sphere = split->bounding_sphere[0];
+                                                    submesh->bsphere = split->bsphere[0];
                                                     submesh->index_format = split->index_format;
                                                     submesh->num_index = split->num_index[0];
                                                     submesh->index_array = (void*)split->index_array[0];
@@ -128,7 +128,7 @@ HOOK(obj_set*, FASTCALL, obj_set_parse_file, 0x000000014046A360,
                                                 if (split->material_index[1] != -1)
                                                     submesh_before->material_index = split->material_index[1];
                                                 if (split->num_index[1] && split->index_array[1]) {
-                                                    submesh_before->bounding_sphere = split->bounding_sphere[1];
+                                                    submesh_before->bsphere = split->bsphere[1];
                                                     submesh_before->index_format = split->index_format;
                                                     submesh_before->num_index = split->num_index[1];
                                                     submesh_before->index_array = (void*)split->index_array[1];
@@ -137,7 +137,7 @@ HOOK(obj_set*, FASTCALL, obj_set_parse_file, 0x000000014046A360,
                                                 continue;
                                             }
                                             else if (frb_submesh->num_index && frb_submesh->index_array) {
-                                                submesh->bounding_sphere = frb_submesh->bounding_sphere;
+                                                submesh->bsphere = frb_submesh->bsphere;
                                                 submesh->index_format = frb_submesh->index_format;
                                                 submesh->num_index = frb_submesh->num_index;
                                                 submesh->index_array = (void*)frb_submesh->index_array;
@@ -177,6 +177,6 @@ HOOK(obj_set*, FASTCALL, obj_set_parse_file, 0x000000014046A360,
 }
 
 void object_patch() {
-    INSTALL_HOOK(_objset_info_storage_load_obj_set_check_not_read);
+    INSTALL_HOOK(wait_objset);
     INSTALL_HOOK(obj_set_parse_file);
 }

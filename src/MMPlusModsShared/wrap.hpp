@@ -36,40 +36,6 @@ enum dx_buffer_type {
     DX_BUFFER_OTHER    = 0x03,
 };
 
-enum dx_command_enum {
-    DX_COMMAND_ClearRenderTargetView  = 0x00,
-    DX_COMMAND_ClearDepthStencilView  = 0x01,
-    DX_COMMAND_OMSetRenderTargets     = 0x02,
-    DX_COMMAND_RSSetViewports         = 0x03,
-    DX_COMMAND_VSSetShader            = 0x04,
-    DX_COMMAND_VSSetConstantBuffers   = 0x05,
-    DX_COMMAND_VSSetShaderResources   = 0x06,
-    DX_COMMAND_VSSetSamplers          = 0x07,
-    DX_COMMAND_PSSetShader            = 0x08,
-    DX_COMMAND_PSSetConstantBuffers   = 0x09,
-    DX_COMMAND_PSSetShaderResources   = 0x0A,
-    DX_COMMAND_PSSetSamplers          = 0x0B,
-    DX_COMMAND_IASetInputLayout       = 0x0C,
-    DX_COMMAND_IASetVertexBuffers     = 0x0D,
-    DX_COMMAND_IASetIndexBuffer       = 0x0E,
-    DX_COMMAND_IASetPrimitiveTopology = 0x0F,
-    DX_COMMAND_RSSetState             = 0x10,
-    DX_COMMAND_OMSetDepthStencilState = 0x11,
-    DX_COMMAND_OMSetBlendState        = 0x12,
-    DX_COMMAND_Draw                   = 0x13,
-    DX_COMMAND_DrawIndexed            = 0x14,
-    DX_COMMAND_Map                    = 0x15,
-    DX_COMMAND_Unmap                  = 0x16,
-    DX_COMMAND_Begin                  = 0x17,
-    DX_COMMAND_End                    = 0x18,
-    DX_COMMAND_GenerateMips           = 0x19,
-    DX_COMMAND_CopyResource           = 0x1A,
-    DX_COMMAND_CopySubresourceRegion  = 0x1B,
-    DX_COMMAND_BeginEvent             = 0x1C,
-    DX_COMMAND_EndEvent               = 0x1D,
-    DX_COMMAND_MAX                    = 0x1E,
-};
-
 enum dx_cull_mode {
     DX_CULL_BACK  = 0x00,
     DX_CULL_FRONT = 0x01,
@@ -93,31 +59,6 @@ enum dx_primitive {
     DX_PRIMITIVE_TRIANGLE_STRIP = 0x01,
     DX_PRIMITIVE_LINE_LIST      = 0x02,
     DX_PRIMITIVE_LINE_STRIP     = 0x03,
-};
-
-enum dx_state_flags {
-    DX_STATE_QUERY  = 0x01,
-    DX_STATE_FLAG_2 = 0x02,
-};
-
-enum dx_state_update_flags {
-    DX_STATE_UPDATE_VERTEX_BUFFER       = 0x00001,
-    DX_STATE_UPDATE_INDEX_BUFFER        = 0x00002,
-    DX_STATE_UPDATE_PRIMITIVE_TOPOLOGY  = 0x00004,
-    DX_STATE_UPDATE_VS_SHADER           = 0x00008,
-    DX_STATE_UPDATE_PS_SHADER           = 0x00010,
-    DX_STATE_UPDATE_VS_BUFFER           = 0x00020,
-    DX_STATE_UPDATE_VS_RESOURCE         = 0x00040,
-    DX_STATE_UPDATE_VS_TEXTURE          = 0x00080,
-    DX_STATE_UPDATE_VS_SAMPLER          = 0x00100,
-    DX_STATE_UPDATE_PS_BUFFER           = 0x00200,
-    DX_STATE_UPDATE_PS_TEXTURE          = 0x00400,
-    DX_STATE_UPDATE_PS_SAMPLER          = 0x00800,
-    DX_STATE_UPDATE_RASTERIZER_STATE    = 0x01000,
-    DX_STATE_UPDATE_DEPTH_STENCIL_STATE = 0x02000,
-    DX_STATE_UPDATE_BLEND_STATE         = 0x04000,
-    DX_STATE_UPDATE_VIEWPORT            = 0x08000,
-    DX_STATE_UPDATE_RENDER_TARGET       = 0x10000,
 };
 
 enum dx_texture_address {
@@ -156,19 +97,14 @@ enum dx_texture_format {
     DX_TEXTURE_FORMAT_MAX                = 0x14,
 };
 
-struct dx_blend_state;
-struct dx_buffer;
-struct dx_depth_stencil_state;
-struct dx_buffer_offset_stride;
-struct dx_input_layout_init_data;
-struct dx_pixel_shader;
-struct dx_rasterizer;
-struct dx_rasterizer_state;
-struct dx_render_target;
-struct dx_sampler_state;
-struct dx_state;
-struct dx_texture;
-struct dx_vertex_shader;
+struct dx_input_layout_init_data {
+    int32_t index;
+    int32_t format;
+    int32_t input_slot;
+    int32_t offset;
+};
+
+static_assert(sizeof(dx_input_layout_init_data) == 0x10, "\"dx_input_layout_init_data\" struct should have a size of 0x10");
 
 struct p_dx_blend_state;
 struct p_dx_buffer;
@@ -181,299 +117,6 @@ struct p_dx_sampler_state;
 struct p_dx_state;
 struct p_dx_texture;
 struct p_dx_vertex_shader;
-
-struct dx_buffer {
-    int32_t uses;
-    dx_buffer* free_next;
-    int32_t flags;
-    ID3D11Buffer* buffer;
-    void* data;
-    int32_t size;
-    ID3D11ShaderResourceView* resource_view;
-};
-
-static_assert(sizeof(dx_buffer) == 0x38, "\"dx_buffer\" struct should have a size of 0x38");
-
-struct dx_buffer_offset_stride {
-    dx_buffer* buffer;
-    int32_t stride;
-    int32_t offset;
-};
-
-static_assert(sizeof(dx_buffer_offset_stride) == 0x10, "\"dx_buffer_offset_stride\" struct should have a size of 0x10");
-
-struct dx_command_clear_render_target_view {
-    ID3D11RenderTargetView* pRenderTargetView;
-    FLOAT ColorRGBA[4];
-};
-
-static_assert(sizeof(dx_command_clear_render_target_view) == 0x18, "\"dx_command_clear_render_target_view\" struct should have a size of 0x18");
-
-struct dx_command_clear_depth_stencil_view {
-    ID3D11DepthStencilView* pDepthStencilView;
-    UINT ClearFlags;
-    FLOAT Depth;
-    UINT8 Stencil;
-};
-
-static_assert(sizeof(dx_command_clear_depth_stencil_view) == 0x18, "\"dx_command_clear_depth_stencil_view\" struct should have a size of 0x18");
-
-struct dx_command_om_set_render_targets {
-
-};
-
-struct dx_command_rs_set_viewports {
-
-};
-
-struct dx_command_vs_set_shader {
-
-};
-
-struct dx_command_vs_set_constant_buffers {
-
-};
-
-struct dx_command_vs_set_shader_resources {
-
-};
-
-struct dx_command_vs_set_samplers {
-
-};
-
-struct dx_command_ps_set_shader {
-
-};
-
-struct dx_command_ps_set_constant_buffers {
-
-};
-
-struct dx_command_ps_set_shader_resources {
-
-};
-
-struct dx_command_ps_set_samplers {
-
-};
-
-struct dx_command_ia_set_input_layout {
-
-};
-
-struct dx_command_ia_set_vertex_buffers {
-
-};
-
-struct dx_command_ia_set_index_buffer {
-
-};
-
-struct dx_command_ia_set_primitive_topology {
-
-};
-
-struct dx_command_rs_set_state {
-
-};
-
-struct dx_command_om_set_depth_stencil_state {
-
-};
-
-struct dx_command_om_set_blend_state {
-
-};
-
-struct dx_command_draw {
-    UINT VertexCount;
-    UINT StartVertexLocation;
-};
-
-static_assert(sizeof(dx_command_draw) == 0x08, "\"dx_command_draw\" struct should have a size of 0x08");
-
-struct dx_command_draw_indexed {
-    UINT IndexCount;
-    UINT StartIndexLocation;
-    INT BaseVertexLocation;
-};
-
-static_assert(sizeof(dx_command_draw_indexed) == 0x0C, "\"dx_command_draw\" struct should have a size of 0x0C");
-
-struct dx_command_map {
-    ID3D11Resource* pResource;
-    UINT Subresource;
-    D3D11_MAP MapType;
-    UINT MapFlags;
-    UINT Size;
-};
-
-static_assert(sizeof(dx_command_map) == 0x18, "\"dx_command_map\" struct should have a size of 0x18");
-
-struct dx_command_unmap {
-    ID3D11Resource* pResource;
-    UINT Subresource;
-};
-
-static_assert(sizeof(dx_command_unmap) == 0x10, "\"dx_command_unmap\" struct should have a size of 0x10");
-
-struct dx_command_begin {
-
-};
-
-struct dx_command_end {
-
-};
-
-struct dx_command_generate_mips {
-
-};
-
-struct dx_command_copy_resource {
-
-};
-
-struct dx_command_copy_sub_resource_region {
-
-};
-
-struct dx_command_begin_event {
-
-};
-
-struct dx_command_end_event {
-
-};
-
-struct dx_command {
-    dx_command_enum type;
-#pragma warning(suppress: 4200)
-    uint8_t data[];
-};
-
-static_assert(sizeof(dx_command) == 0x04, "\"dx_command\" struct should have a size of 0x04");
-
-struct dx_command_array {
-    dx_command* begin;
-    dx_command* end;
-    dx_command* curr;
-
-    inline dx_command* get_next_command(size_t size) {
-        dx_command* cmd = curr;
-        dx_command* cmd_end = (dx_command*)&cmd->data[size];
-        if (end >= cmd_end)
-            curr = cmd_end;
-        else
-            cmd = 0;
-        return cmd;
-    }
-};
-
-static_assert(sizeof(dx_command_array) == 0x18, "\"dx_command_array\" struct should have a size of 0x18");
-
-struct dx_input_layout_init_data {
-    int32_t index;
-    int32_t format;
-    int32_t input_slot;
-    int32_t offset;
-};
-
-struct dx_state {
-    dx_command_array* command_array;
-    struct ID3DUserDefinedAnnotation* annot;
-    __crt_locale_pointers* field_10;
-    dx_render_target* default_render_target;
-    dx_state_flags flags;
-    dx_state_update_flags update_flags;
-    dx_render_target* curr_render_target;
-    dx_render_target* render_target;
-    int32_t curr_x;
-    int32_t curr_y;
-    int32_t curr_width;
-    int32_t curr_height;
-    int32_t x;
-    int32_t y;
-    int32_t width;
-    int32_t height;
-    dx_vertex_shader* curr_vs_shader;
-    dx_vertex_shader* vs_shader;
-    dx_pixel_shader* curr_ps_shader;
-    dx_pixel_shader* ps_shader;
-    int32_t vertex_buffer_begin;
-    int32_t vertex_buffer_end;
-    dx_buffer_offset_stride vertex_buffer[12];
-    dx_buffer_offset_stride curr_vertex_buffer[12];
-    __int64 index_buffer_format;
-    dx_buffer* index_buffer;
-    __int64 index_buffer_offset;
-    __int64 curr_index_buffer_format;
-    dx_buffer* curr_index_buffer;
-    __int64 curr_index_buffer_offset;
-    dx_primitive primitive_topology;
-    D3D11_PRIMITIVE_TOPOLOGY curr_primitive_topology;
-    int32_t VSConstantBuffersStartSlot;
-    int32_t VSConstantBuffersEndSlot;
-    dx_buffer* VSConstantBuffers[4];
-    dx_buffer* VSCurrConstantBuffers[4];
-    int32_t VSShaderStartSlot;
-    int32_t VSShaderEndSlot;
-    dx_buffer* VSShaderResources[16];
-    dx_buffer* VSCurrShaderResources[16];
-    int32_t VSTextureStartSlot;
-    int32_t VSTextureEndSlot;
-    dx_texture* VSTextures[16];
-    dx_texture* VSCurrTextures[16];
-    int32_t VSSamplerStartSlot;
-    int32_t VSSamplerEndSlot;
-    dx_sampler_state* VSSamplers[16];
-    dx_sampler_state* VSCurrSamplers[16];
-    int32_t PSConstantBuffersStartSlot;
-    int32_t PSConstantBuffersEndSlot;
-    dx_buffer* PSConstantBuffers[4];
-    dx_buffer* PSCurrConstantBuffers[4];
-    int32_t PSTextureStartSlot;
-    int32_t PSTextureEndSlot;
-    dx_texture* PSTextures[24];
-    dx_texture* PSCurrTextures[24];
-    int32_t PSSamplerStartSlot;
-    int32_t PSSamplerEndSlot;
-    dx_sampler_state* PSSamplers[16];
-    dx_sampler_state* PSCurrSamplers[16];
-    dx_rasterizer_state* RSRasterizerState;
-    dx_rasterizer_state* RSCurrRasterizerState;
-    dx_depth_stencil_state* OMDepthStencilState;
-    dx_depth_stencil_state* OMCurrDepthStencilState;
-    dx_blend_state* OMBlendState;
-    dx_blend_state* OMCurrBlendState;
-};
-
-static_assert(sizeof(dx_state) == 0x8A0, "\"dx_state\" struct should have a size of 0x8A0");
-
-struct dx_depth_stencil_state {
-    int32_t uses;
-    dx_depth_stencil_state* free_next;
-    ID3D11DepthStencilState* depth_stencil_state;
-};
-
-struct dx_rasterizer_state {
-    int32_t uses;
-    dx_rasterizer_state* free_next;
-    ID3D11RasterizerState* rasterizer_state;
-};
-
-struct dx_texture {
-    int32_t uses;
-    dx_texture* free_next;
-    ID3D11Texture2D* texture;
-    ID3D11ShaderResourceView* resource_view;
-    dx_texture_format format;
-    dx_texture_format internal_format;
-    uint32_t flags;
-    uint32_t width;
-    uint32_t height;
-    uint32_t mip_levels;
-};
 
 struct p_dx_blend_state {
     struct dx_blend_state* ptr;
@@ -536,7 +179,7 @@ struct p_dx_buffer {
 };
 
 struct p_dx_depth_stencil_state {
-    dx_depth_stencil_state* ptr;
+    struct dx_depth_stencil_state* ptr;
 
     inline p_dx_depth_stencil_state() : ptr() {
 
@@ -655,7 +298,7 @@ struct p_dx_rasterizer_state {
 };
 
 struct p_dx_render_target {
-    dx_render_target* ptr;
+    struct dx_render_target* ptr;
 
     inline p_dx_render_target() : ptr() {
 
@@ -722,6 +365,7 @@ struct p_dx_state {
     void draw(uint32_t vertex_count, int32_t start_vertex_location = 0);
     void draw_indexed(uint32_t index_count, uint32_t start_index_location = 0, int32_t base_vertex_location = 0);
     void end_event();
+    struct dx_render_target* get_curr_render_target(); // Added
     p_dx_texture* get_curr_render_target_textures();
     void get_viewport(int32_t* x, int32_t* y, int32_t* width, int32_t* height);
     void get_viewport(int32_t& x, int32_t& y, int32_t& width, int32_t& height);
@@ -738,6 +382,7 @@ struct p_dx_state {
     void set_ps_shader(p_dx_pixel_shader& p_dx_ps);
     void set_ps_textures(int32_t start_slot, int32_t num_views, p_dx_texture* p_dx_tex);
     void set_rasterizer_state(p_dx_rasterizer_state* p_dx_rs);
+    void set_render_target(struct dx_render_target* dx_rend_targ); // Added
     void set_render_target(p_dx_render_target* p_dx_rend_targ);
     void set_vertex_buffer(int32_t start_vertex_buffer, int32_t num_vertex_buffers,
         p_dx_buffer** buffers, int32_t* strides, int32_t* offsets);
@@ -772,7 +417,7 @@ struct p_dx_state {
 };
 
 struct p_dx_texture {
-    dx_texture* ptr;
+    struct dx_texture* ptr;
 
     inline p_dx_texture() : ptr() {
 
@@ -842,15 +487,6 @@ struct dx_vertex_pixel_shader {
     inline dx_vertex_pixel_shader() {
 
     }
-};
-
-struct dx_render_target {
-    int32_t uses;
-    dx_render_target* free_next;
-    int32_t num_render_target_views;
-    ID3D11RenderTargetView** render_target_views;
-    ID3D11DepthStencilView* depth_stencil_view;
-    p_dx_texture textures[8];
 };
 
 extern ID3D11Device*& d3d_device;
