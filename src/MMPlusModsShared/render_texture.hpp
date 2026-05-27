@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "shared.hpp"
+#include "../KKdLib/default.hpp"
 #include "texture.hpp"
 #include "wrap.hpp"
 

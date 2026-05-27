@@ -102,7 +102,7 @@ HOOK(void, FASTCALL, stage__set, 0x000000015A47C0A0, stage* prev, stage* curr) {
                 const stage_data_reflect* reflect = frg_stage_data->reflect;
                 render_manager.pass_sw[rndr::RND_PASSID_REFLECT] = true;
                 render_manager.reflect_blur_num = reflect->blur_num;
-                render_manager.reflect_blur_filter = (blur_filter_mode)reflect->blur_filter;
+                render_manager.reflect_blur_filter = reflect->blur_filter;
                 render_manager.reflect = true;
                 reflect_refract_resolution_mode  mode = REFLECT_REFRACT_RESOLUTION_512x256;
                 if (frg_stage_data->reflect_type != STAGE_DATA_REFLECT_REFLECT_MAP)

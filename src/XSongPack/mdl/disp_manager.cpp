@@ -42,8 +42,8 @@ namespace mdl {
     bool obj_reflect_enable;
 
     ObjSubMeshArgs::ObjSubMeshArgs() : sub_mesh(), mesh(), material(), textures(), mat_count(), mats(),
-        vertex_buffer(), vertex_buffer_offset(), index_buffer(), set_blend_color(), chara_color(), self_shadow(),
-        shadow(), morph_vertex_buffer(), morph_vertex_buffer_offset(), morph_weight(), texture_pattern_count(),
+        vertex_buffer(), vertex_buffer_offset(), index_buffer(), set_blend_color(), chara_color(), receive_shadow(),
+        shadow_group(), morph_vertex_buffer(), morph_vertex_buffer_offset(), morph_weight(), texture_pattern_count(),
         texture_pattern_array(), texture_transform_count(), texture_transform_array(), field_D8(),
         field_E0(), field_E8(), instances_count(), instances_mat(), func(), func_data() {
 
@@ -195,13 +195,13 @@ namespace mdl {
         args->emission = emission;
 
         args->chara_color = disp_manager->chara_color;
-        if (disp_manager->obj_flags & mdl::OBJ_4)
-            args->self_shadow = 1;
+        if (disp_manager->obj_flags & OBJ_4)
+            args->receive_shadow = RECEIVE_SHADOW_ENABLE;
         else if (disp_manager->obj_flags & mdl::OBJ_8)
-            args->self_shadow = 2;
+            args->receive_shadow = RECEIVE_SHADOW_DISABLE;
         else
-            args->self_shadow = 0;
-        args->shadow = disp_manager->shadow_type;
+            args->receive_shadow = RECEIVE_SHADOW_DEFAULT;
+        args->shadow_group = disp_manager->shadow_group;
         args->texture_color_coeff = disp_manager->texture_color_coeff;
         args->texture_color_coeff.w = disp_manager->wet_param;
         args->texture_color_offset = disp_manager->texture_color_offset;
@@ -1012,8 +1012,7 @@ namespace mdl {
 
                 const ObjFlags obj_flags = disp_manager->obj_flags;
                 if (obj_flags & mdl::OBJ_SHADOW_OBJECT) {
-                    entry_list((ObjType)(OBJ_TYPE_SHADOW_OBJECT_CHARA
-                        + disp_manager->shadow_type), data);
+                    entry_list((ObjType)(OBJ_TYPE_SHADOW_OBJECT_CHARA + disp_manager->shadow_group), data);
 
                     if (obj_flags & mdl::OBJ_USER)
                         entry_list(OBJ_TYPE_USER, data);
@@ -1091,8 +1090,7 @@ namespace mdl {
                 }
                 else {
                     if (obj_flags & mdl::OBJ_SHADOW)
-                        entry_list((ObjType)(OBJ_TYPE_SHADOW_CHARA
-                            + disp_manager->shadow_type), data);
+                        entry_list((ObjType)(OBJ_TYPE_SHADOW_CHARA + disp_manager->shadow_group), data);
 
                     if (obj_flags & mdl::OBJ_SSS)
                         entry_list(OBJ_TYPE_SSS, data);
@@ -1130,8 +1128,7 @@ namespace mdl {
                 }
 
                 if (obj_flags & mdl::OBJ_SHADOW)
-                    entry_list((ObjType)(OBJ_TYPE_SHADOW_CHARA
-                        + disp_manager->shadow_type), data);
+                    entry_list((ObjType)(OBJ_TYPE_SHADOW_CHARA + disp_manager->shadow_group), data);
                 if (obj_flags & mdl::OBJ_SILHOUETTE_HIGH)
                     entry_list(OBJ_TYPE_SILHOUETTE_HIGH, data);
                 if (obj_flags & mdl::OBJ_CHARA_REFLECT)
@@ -1535,8 +1532,7 @@ namespace mdl {
 
                 const ObjFlags obj_flags = disp_manager->obj_flags;
                 if (obj_flags & mdl::OBJ_SHADOW_OBJECT) {
-                    entry_list((ObjType)(OBJ_TYPE_SHADOW_OBJECT_CHARA
-                        + disp_manager->shadow_type), data);
+                    entry_list((ObjType)(OBJ_TYPE_SHADOW_OBJECT_CHARA + disp_manager->shadow_group), data);
 
                     if (obj_flags & mdl::OBJ_USER)
                         entry_list(OBJ_TYPE_USER, data);

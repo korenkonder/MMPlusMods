@@ -14,7 +14,6 @@
 #include "rob/rob.hpp"
 #include "frame_rate_control.hpp"
 #include "object.hpp"
-#include "shadow.hpp"
 #include "types.hpp"
 
 enum auth_3d_camera_auxiliary_flags {
@@ -189,7 +188,7 @@ static_assert(sizeof(auth_3d_object_texture_transform) == 0x370, "\"auth_3d_obje
 struct auth_3d_object_disp_data {
     int32_t flags;
     mat4 mat;
-    shadow_type_enum shadow;
+    int32_t shadow_group;
     mdl::ObjFlags obj_flags;
     size_t texture_pattern_count;
     size_t texture_pattern_count_max;
@@ -266,7 +265,7 @@ struct auth_3d_object_hrc_disp_data {
     int32_t flags;
     mat4 mat;
     mdl::ObjFlags obj_flags;
-    shadow_type_enum shadow_type;
+    int32_t shadow_group;
     vec3 trans;
 };
 

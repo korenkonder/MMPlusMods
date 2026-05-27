@@ -10,7 +10,6 @@
 #include "../../KKdLib/vec.hpp"
 #include "../../MMPlusModsShared/mdl/disp_manager.hpp"
 #include "../../MMPlusModsShared/color.hpp"
-#include "../../MMPlusModsShared/shadow.hpp"
 #include "../object.hpp"
 
 #define MATERIAL_LIST_COUNT 24
@@ -91,6 +90,11 @@ namespace mdl {
         OBJ_TYPE_REFLECT_MAX,
     };
 
+    enum ReceiveShadow {
+        RECEIVE_SHADOW_DEFAULT = 0,
+        RECEIVE_SHADOW_ENABLE,
+        RECEIVE_SHADOW_DISABLE,
+    };
 }
 
 struct material_list_struct {
@@ -128,8 +132,8 @@ namespace mdl {
         bool set_blend_color;
         bool chara_color;
         vec4 blend_color;
-        int32_t self_shadow;
-        shadow_type_enum shadow;
+        ReceiveShadow receive_shadow;
+        int32_t shadow_group;
         p_dx_buffer* morph_vertex_buffer;
         int32_t morph_vertex_buffer_offset;
         float_t morph_weight;
@@ -398,7 +402,7 @@ namespace mdl {
 
     struct DispManager {
         ObjFlags obj_flags;
-        shadow_type_enum shadow_type;
+        int32_t shadow_group;
         int64_t field_8;
         ObjListData* data_buff;
         int32_t data_buff_max_count;

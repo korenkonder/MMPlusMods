@@ -672,9 +672,9 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
                 render_manager.render->apply_dof(rend_data_ctx, cam, refl_tex, reflection_quality);
 
         static void (*blur_filter_apply)(render_data_context & rend_data_ctx, texture * dst, __int64 a3, texture * src, int a5,
-            blur_filter_mode filter, const vec2 & res_scale, const vec4 & scale, const vec4 & offset, float_t quality)
+            ImgfBoxSampl filter, const vec2 & res_scale, const vec4 & scale, const vec4 & offset, float_t quality)
             = (void (*)(render_data_context & rend_data_ctx, texture * dst, __int64 a3, texture * src, int a5,
-                blur_filter_mode filter, const vec2 & res_scale, const vec4 & scale, const vec4 & offset, float_t quality))0x0000000140422DB0;
+                ImgfBoxSampl filter, const vec2 & res_scale, const vec4 & scale, const vec4 & offset, float_t quality))0x0000000140422DB0;
 
         int32_t index = 0;
         for (int32_t i = render_manager.reflect_blur_num, j = 0; i > 0; i--, j++, index = 1 - index) {

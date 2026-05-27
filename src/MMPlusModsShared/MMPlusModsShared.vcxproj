@@ -148,7 +148,6 @@
     <ClInclude Include="resolution_mode.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="rob\rob.hpp" />
-    <ClInclude Include="shadow.hpp" />
     <ClInclude Include="shared.hpp" />
     <ClInclude Include="sprite.hpp" />
     <ClInclude Include="stage.hpp" />

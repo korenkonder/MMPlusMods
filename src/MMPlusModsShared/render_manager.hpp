@@ -11,7 +11,7 @@
 #include "camera.hpp"
 #include "render_context.hpp"
 #include "render_texture.hpp"
-#include "shadow.hpp"
+#include "shared.hpp"
 #include "stage.hpp"
 #include "types.hpp"
 
@@ -27,6 +27,8 @@ struct draw_pre_process {
     void(FASTCALL* func)(void*);
     void* data;
 };
+
+class Shadow;
 
 namespace rndr {
     enum RenderPassID {
@@ -335,8 +337,8 @@ namespace rndr {
         bool reflect;
         bool refract;
         int32_t reflect_blur_num;
-        blur_filter_mode reflect_blur_filter;
-        rndr::Render* render;
+        ImgfBoxSampl reflect_blur_filter;
+        Render* render;
         bool sync_gpu;
         int64_t cpu_time[17];
         int64_t gpu_time[17];
@@ -391,8 +393,8 @@ namespace rndr {
 
 extern rndr::RenderManager& render_manager;
 
-extern float_t(*reflection_quality_get)();
-extern bool (*sub_1402C1D20)();
+extern bool (*add_param_struct__get_sss)();
+extern float_t(*add_param_struct__get_reflection_quality)();
 extern void (*fog_set)(render_data_context& rend_data_ctx, int32_t id);
 extern void (*image_filter_scale)(render_data_context& rend_data_ctx, texture* dst, int64_t a3,
     texture* src, int64_t a5, const vec4& scale, float_t quality);
