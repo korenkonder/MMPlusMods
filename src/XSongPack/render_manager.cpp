@@ -566,7 +566,7 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
         p_dx_texture* default_texture = dx_default_states_get_texture(1);
         rend_data_ctx.state.set_vs_textures(15, 1, default_texture);
         rend_data_ctx.state.set_ps_textures(15, 1, default_texture);
-        rend_data_ctx.uniform->arr[U_WATER_REFLECT] = 0;
+        rend_data_ctx.uniform->arr[U_TEX_REFLECTMAP] = 0;
 
         p_dx_sampler_state* default_sampler_state = dx_default_states_get_sampler_state(
             DX_TEXTURE_ADDRESS_CLAMP, DX_TEXTURE_ADDRESS_CLAMP, false);

@@ -825,38 +825,38 @@ namespace Glitter {
             if (rend_group->mask_texture.not_null()) {
                 rend_data_ctx.state.set_ps_textures(1, 1, &rend_group->mask_texture);
 
-                rend_data_ctx.uniform->arr[U_TEXTURE_COUNT] = 2;
+                rend_data_ctx.uniform->arr[U_TEX_COLOR] = 2;
                 switch (rend_group->mask_blend_mode) {
                 default:
-                    rend_data_ctx.uniform->arr[U_TEXTURE_BLEND] = 0;
+                    rend_data_ctx.uniform->arr[U_BLEND_FUNC_01] = 0;
                     break;
                 case PARTICLE_BLEND_MULTIPLY:
-                    rend_data_ctx.uniform->arr[U_TEXTURE_BLEND] = 1;
+                    rend_data_ctx.uniform->arr[U_BLEND_FUNC_01] = 1;
                     break;
                 case PARTICLE_BLEND_ADD:
-                    rend_data_ctx.uniform->arr[U_TEXTURE_BLEND] = 2;
+                    rend_data_ctx.uniform->arr[U_BLEND_FUNC_01] = 2;
                     break;
                 }
             }
             else {
-                rend_data_ctx.uniform->arr[U_TEXTURE_COUNT] = 1;
-                rend_data_ctx.uniform->arr[U_TEXTURE_BLEND] = 0;
+                rend_data_ctx.uniform->arr[U_TEX_COLOR] = 1;
+                rend_data_ctx.uniform->arr[U_BLEND_FUNC_01] = 0;
             }
         }
         else {
-            rend_data_ctx.uniform->arr[U_TEXTURE_COUNT] = 0;
-            rend_data_ctx.uniform->arr[U_TEXTURE_BLEND] = 0;
+            rend_data_ctx.uniform->arr[U_TEX_COLOR] = 0;
+            rend_data_ctx.uniform->arr[U_BLEND_FUNC_01] = 0;
         }
 
         switch (rend_group->fog_type) {
         default:
-            rend_data_ctx.uniform->arr[U_FOG_STAGE] = 0;
+            rend_data_ctx.uniform->arr[U_FOG] = 0;
             break;
         case Glitter::FOG_DEPTH:
-            rend_data_ctx.uniform->arr[U_FOG_STAGE] = 1;
+            rend_data_ctx.uniform->arr[U_FOG] = 1;
             break;
         case Glitter::FOG_HEIGHT:
-            rend_data_ctx.uniform->arr[U_FOG_STAGE] = 2;
+            rend_data_ctx.uniform->arr[U_FOG] = 2;
             break;
         }
 
@@ -891,9 +891,9 @@ namespace Glitter {
 
         rend_data_ctx.state.set_depth_stencil_state(dx_default_states_get_depth_stencil_state(depth_test, DX_DEPTH_FUNC_GREATER_EQUAL));
 
-        rend_data_ctx.uniform->arr[U_NORMAL] = 1;
-        rend_data_ctx.uniform->arr[U_SPECULAR] = 1;
-        rend_data_ctx.uniform->arr[U_ENV_MAP] = 1;
+        rend_data_ctx.uniform->arr[U_TEX_NORMAL] = 1;
+        rend_data_ctx.uniform->arr[U_TEX_SPECULAR] = 1;
+        rend_data_ctx.uniform->arr[U_TEX_ENVMAP] = 1;
         rend_data_ctx.uniform->arr[U_SPECULAR_IBL] = 1;
 
         rend_data_ctx.state.set_blend_state(dx_default_states_get_blend_state(blend_enable,
