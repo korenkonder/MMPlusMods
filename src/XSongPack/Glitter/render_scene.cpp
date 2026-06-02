@@ -894,7 +894,7 @@ namespace Glitter {
         rend_data_ctx.uniform->arr[U_TEX_NORMAL] = 1;
         rend_data_ctx.uniform->arr[U_TEX_SPECULAR] = 1;
         rend_data_ctx.uniform->arr[U_TEX_ENVMAP] = 1;
-        rend_data_ctx.uniform->arr[U_SPECULAR_IBL] = 1;
+        rend_data_ctx.uniform->arr[U_SPECULAR] = 1;
 
         rend_data_ctx.state.set_blend_state(dx_default_states_get_blend_state(blend_enable,
             src_blend, dst_blend, src_blend, dst_blend, write_mask));
