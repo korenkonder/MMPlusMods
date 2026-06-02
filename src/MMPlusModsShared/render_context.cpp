@@ -158,7 +158,7 @@ void render_data_context::uniform_value_reset() {
     uniform->arr[U_TEX_LUCENCY] = 0;
     uniform->arr[U_TEX_ENVMAP] = 0;
     uniform->arr[U_DOUBLE_SIDE] = 0;
-    uniform->arr[U_SPECULAR_IBL] = 0;
+    uniform->arr[U_SPECULAR] = 0;
     uniform->arr[U_FOG] = 0;
     uniform->arr[U_FOGMAP] = 0;
     uniform->arr[U_ANISO_TANGENT] = 0;

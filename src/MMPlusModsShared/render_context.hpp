@@ -143,7 +143,6 @@ enum UniformName {
     U_UV_LAYER,
     U_MAX,
     U_INVALID = -1,
-    U_INVALID = -1,
 };
 
 struct uniform_value {
