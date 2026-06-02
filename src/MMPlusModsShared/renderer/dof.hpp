@@ -46,21 +46,21 @@ struct render_data_context;
 
 namespace renderer {
     struct DOF3 {
-        int32_t width;
-        int32_t height;
-        float_t scale;
+        int32_t m_width;
+        int32_t m_height;
+        float_t m_scale;
         int8_t field_C;
-        p_dx_texture textures[6];
-        p_dx_render_target render_targets[4];
-        p_dx_sampler_state samplers[2];
-        dx_vertex_pixel_shader shaders[15];
-        p_dx_buffer buffers[8];
+        p_dx_texture m_tex[6];
+        p_dx_render_target m_fbo[4];
+        p_dx_sampler_state m_sampler[2];
+        dx_vertex_pixel_shader m_program[15];
+        p_dx_buffer m_buffer[8];
         p_dx_buffer field_1A0;
         int32_t field_1A8;
         int32_t field_1AC;
-        p_dx_rasterizer_state rasterizer_state;
-        p_dx_depth_stencil_state depth_stencil_state;
-        p_dx_blend_state blend_state;
+        p_dx_rasterizer_state m_rasterizer_state;
+        p_dx_depth_stencil_state m_depth_stencil_state;
+        p_dx_blend_state m_blend_state;
 
         void apply(render_data_context& rend_data_ctx,
             RenderTexture& rt, p_dx_texture& color_texture, p_dx_texture& depth_texture,

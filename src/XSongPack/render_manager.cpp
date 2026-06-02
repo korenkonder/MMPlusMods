@@ -193,42 +193,42 @@ HOOK(void, FASTCALL, rndr__Render__draw_npr_frame, 0x00000001404A52B0, rndr::Ren
     }
 }
 
-HOOK(void, FASTCALL, rndr__Render__transparency_copy, 0x00000001404A6EA0,
-    rndr::Render * This, render_data_context& rend_data_ctx) {
+HOOK(void, FASTCALL, rndr__Render__begin_render_transparency, 0x00000001404A6EA0,
+    rndr::Render* This, render_data_context& rend_data_ctx) {
     if (reflect_draw[rend_data_ctx.index] && reflect_full_ptr) {
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
         const float_t reflection_quality = reflection_quality_full_get();
         int32_t width = (int32_t)((float_t)refl_tex.GetWidth() * reflection_quality);
         int32_t height = (int32_t)((float_t)refl_tex.GetHeight() * reflection_quality);
-        rend_data_ctx.state.copy_texture_region(&This->transparency->texture,
+        rend_data_ctx.state.copy_texture_region(&This->transparency->m_tex,
             0, 0, &refl_tex.GetColorTex(), 0, 0, width, height);
-        rend_data_ctx.state.set_render_target(&This->transparency->render_target);
+        rend_data_ctx.state.set_render_target(&This->transparency->m_fbo);
         rend_data_ctx.state.set_viewport(0, 0, width, height);
     }
     else {
         float_t image_quality = This->render_ptr->image_quality;
-        int32_t width = app::get_value_scaled(This->transparency->texture.get_width(), image_quality);
-        int32_t height = app::get_value_scaled(This->transparency->texture.get_height(), image_quality);
-        rend_data_ctx.state.copy_texture_region(&This->transparency->texture,
+        int32_t width = app::get_value_scaled(This->transparency->m_tex.get_width(), image_quality);
+        int32_t height = app::get_value_scaled(This->transparency->m_tex.get_height(), image_quality);
+        rend_data_ctx.state.copy_texture_region(&This->transparency->m_tex,
             0, 0, &This->rend_texture[0].GetColorTex(), 0, 0, width, height);
-        rend_data_ctx.state.set_render_target(&This->transparency->render_target);
+        rend_data_ctx.state.set_render_target(&This->transparency->m_fbo);
         rend_data_ctx.state.set_viewport(0, 0, width, height);
     }
 }
 
-HOOK(void, FASTCALL, rndr__Render__transparency_combine, 0x00000001404A6F60,
+HOOK(void, FASTCALL, rndr__Render__end_render_transparency, 0x00000001404A6F60,
     rndr::Render* This, render_data_context& rend_data_ctx, float_t alpha) {
-    static void (*renderer__Transparency__combine)(renderer::Transparency * This, render_data_context & rend_data_ctx,
+    static void (*renderer__Transparency__end_render)(renderer::Transparency * This, render_data_context & rend_data_ctx,
         RenderTexture * dst, p_dx_texture * buf, float_t alpha, float_t quality)
         = (void (*)(renderer::Transparency * This, render_data_context & rend_data_ctx,
             RenderTexture * dst, p_dx_texture * buf, float_t alpha, float_t quality))0x00000014049A540;
     if (reflect_draw[rend_data_ctx.index] && reflect_full_ptr) {
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
-        renderer__Transparency__combine(This->transparency, rend_data_ctx,
+        renderer__Transparency__end_render(This->transparency, rend_data_ctx,
             &refl_tex, &This->render_buffer, alpha, 1.0f);
     }
     else
-        renderer__Transparency__combine(This->transparency, rend_data_ctx,
+        renderer__Transparency__end_render(This->transparency, rend_data_ctx,
             &This->rend_texture[0], &This->render_buffer, alpha, This->render_ptr->image_quality);
 }
 
@@ -357,8 +357,8 @@ void render_manager_patch() {
     INSTALL_HOOK(sub_1402B9460);
 
     INSTALL_HOOK(rndr__Render__draw_npr_frame);
-    INSTALL_HOOK(rndr__Render__transparency_copy);
-    INSTALL_HOOK(rndr__Render__transparency_combine);
+    INSTALL_HOOK(rndr__Render__begin_render_transparency);
+    INSTALL_HOOK(rndr__Render__end_render_transparency);
     INSTALL_HOOK(render_data_context__set_batch_scene_camera);
     INSTALL_HOOK(render_manager_free_render_data);
     INSTALL_HOOK(render_manager_init_render_data);
@@ -410,16 +410,16 @@ static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::Ob
         && disp_manager->get_obj_count(translucent) < 1)
         return;
 
-    static void (*rndr__Render__transparency_copy)(rndr::Render * This, render_data_context & rend_data_ctx)
+    static void (*rndr__Render__begin_render_transparency)(rndr::Render * This, render_data_context & rend_data_ctx)
         = (void (*)(rndr::Render * This, render_data_context & rend_data_ctx))0x00000001404A6EA0;
-    static void (*rndr__Render__transparency_combine)(rndr::Render * This, render_data_context & rend_data_ctx, float_t alpha)
+    static void (*rndr__Render__end_render_transparency)(rndr::Render * This, render_data_context & rend_data_ctx, float_t alpha)
         = (void (*)(rndr::Render * This, render_data_context & rend_data_ctx, float_t alpha))0x00000001404A6F60;
 
     int32_t alpha_array[0x100];
     int32_t count = draw_pass_3d_translucent_count_layers(rend_data_ctx, alpha_array, opaque, transparent, translucent, cam);
     for (int32_t i = 0; i < count; i++) {
         int32_t alpha = alpha_array[i];
-        rndr__Render__transparency_copy(render_manager.render, rend_data_ctx);
+        rndr__Render__begin_render_transparency(render_manager.render, rend_data_ctx);
         if (render_manager.draw_pass_3d[DRAW_PASS_3D_TRANSLUCENT] && disp_manager->get_obj_count(opaque))
             mdl::DispManager::draw(rend_data_ctx, opaque, cam, 0, -1, 0, 0, true, alpha);
         if (render_manager.draw_pass_3d[DRAW_PASS_3D_TRANSLUCENT] && disp_manager->get_obj_count(transparent))
@@ -432,7 +432,7 @@ static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::Ob
                 DX_BLEND_INV_SRC_ALPHA, DX_BLEND_SRC_ALPHA,
                 DX_BLEND_INV_SRC_ALPHA, DX_BLEND_WRITE_MASK_RGBA));
         }
-        rndr__Render__transparency_combine(render_manager.render, rend_data_ctx, (float_t)alpha * (float_t)(1.0 / 255.0));
+        rndr__Render__end_render_transparency(render_manager.render, rend_data_ctx, (float_t)alpha * (float_t)(1.0 / 255.0));
     }
 }
 
@@ -443,16 +443,16 @@ static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::Ob
         && disp_manager->get_obj_count(translucent) < 1)
         return;
 
-    static void (*rndr__Render__transparency_copy)(rndr::Render * This, render_data_context & rend_data_ctx)
+    static void (*rndr__Render__begin_render_transparency)(rndr::Render * This, render_data_context & rend_data_ctx)
         = (void (*)(rndr::Render * This, render_data_context & rend_data_ctx))0x00000001404A6EA0;
-    static void (*rndr__Render__transparency_combine)(rndr::Render * This, render_data_context & rend_data_ctx, float_t alpha)
+    static void (*rndr__Render__end_render_transparency)(rndr::Render * This, render_data_context & rend_data_ctx, float_t alpha)
         = (void (*)(rndr::Render * This, render_data_context & rend_data_ctx, float_t alpha))0x00000001404A6F60;
 
     int32_t alpha_array[0x100];
     int32_t count = draw_pass_3d_translucent_count_layers(rend_data_ctx, alpha_array, opaque, transparent, translucent, cam);
     for (int32_t i = 0; i < count; i++) {
         int32_t alpha = alpha_array[i];
-        rndr__Render__transparency_copy(render_manager.render, rend_data_ctx);
+        rndr__Render__begin_render_transparency(render_manager.render, rend_data_ctx);
         if (render_manager.draw_pass_3d[DRAW_PASS_3D_TRANSLUCENT] && disp_manager->get_obj_count(opaque))
             mdl::DispManager::draw(rend_data_ctx, opaque, cam, 0, -1, alpha);
         if (render_manager.draw_pass_3d[DRAW_PASS_3D_TRANSLUCENT] && disp_manager->get_obj_count(transparent))
@@ -465,7 +465,7 @@ static void draw_pass_3d_translucent(render_data_context& rend_data_ctx, mdl::Ob
                 DX_BLEND_INV_SRC_ALPHA, DX_BLEND_SRC_ALPHA,
                 DX_BLEND_INV_SRC_ALPHA, DX_BLEND_WRITE_MASK_RGBA));
         }
-        rndr__Render__transparency_combine(render_manager.render, rend_data_ctx, (float_t)alpha * (float_t)(1.0 / 255.0));
+        rndr__Render__end_render_transparency(render_manager.render, rend_data_ctx, (float_t)alpha * (float_t)(1.0 / 255.0));
     }
 }
 
