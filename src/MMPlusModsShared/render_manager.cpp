@@ -14,9 +14,8 @@
 
 rndr::RenderManager& render_manager = *(rndr::RenderManager*)0x00000001417582D0;
 
-float_t(* reflection_quality_get)() = (float_t(*)())0x00000001402C2260;
-
-bool (*sub_1402C1D20)() = (bool (*)())0x00000001402C1D20;
+bool (*add_param_struct__get_sss)() = (bool (*)())0x00000001402C1D20;
+float_t(*add_param_struct__get_reflection_quality)() = (float_t(*)())0x00000001402C2260;
 
 void (*fog_set)(render_data_context& rend_data_ctx, int32_t id)
     = (void (*)(render_data_context & rend_data_ctx, int32_t id))0x00000001403F44B0;

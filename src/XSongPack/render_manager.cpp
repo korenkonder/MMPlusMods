@@ -55,7 +55,7 @@ void rndr__RenderManager__pass_ss_sss_mid_impl(render_data_context& rend_data_ct
 
     rend_data_ctx.state.begin_event("reflect");
 
-    if (sub_1402C1D20()) {
+    if (add_param_struct__get_sss()) {
         ::sss_data* sss = sss_data_get();
 
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
@@ -152,7 +152,7 @@ HOOK(void, FASTCALL, rndr__Render__draw_npr_frame, 0x00000001404A52B0, rndr::Ren
     if (reflect_draw[rend_data_ctx.index] && reflect_full_ptr) {
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
         RenderTexture& refl_buf_tex = reflect_full_ptr->reflect_buffer_texture;
-        if (!sub_1402C1D20()) {
+        if (!add_param_struct__get_sss()) {
             refl_buf_tex.begin_render(rend_data_ctx.state);
             rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);
             rend_data_ctx.state.clear_depth_stencil_view(0, 0.0f, false);
@@ -171,7 +171,7 @@ HOOK(void, FASTCALL, rndr__Render__draw_npr_frame, 0x00000001404A52B0, rndr::Ren
         refl_tex.begin_render(rend_data_ctx.state);
     }
     else {
-        if (!sub_1402C1D20()) {
+        if (!add_param_struct__get_sss()) {
             This->sss_contour_texture->begin_render(rend_data_ctx.state);
             rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);
             rend_data_ctx.state.clear_depth_stencil_view(0, 0.0f, false);
@@ -541,12 +541,12 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
     RenderTexture& refl_buf_tex = reflect_full_ptr->reflect_buffer_texture;
     RenderTexture& refl_nonsss_tex = reflect_full_ptr->reflect_nonsss_texture;
 
-    if (sub_1402C1D20())
+    if (add_param_struct__get_sss())
         refl_tex.begin_render(rend_data_ctx.state);
     else
         refl_nonsss_tex.begin_render(rend_data_ctx.state);
 
-    if (!sub_1402C1D20())
+    if (!add_param_struct__get_sss())
         rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);
 
     extern bool reflect_full;
@@ -585,7 +585,7 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
         rend_data_ctx.set_npr(&render_manager);
         rend_data_ctx.set_batch_sss_param(sss_param_reflect);
 
-        if (!sss_data_get()->enable || !sss_data_get()->downsample || !sub_1402C1D20() || sub_1404D9FD0())
+        if (!sss_data_get()->enable || !sss_data_get()->downsample || !add_param_struct__get_sss() || sub_1404D9FD0())
             rend_data_ctx.state.clear_depth_stencil_view(0x00, 0.0f, true);
 
         lighting_set(rend_data_ctx);
@@ -620,8 +620,8 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
         if (render_manager.draw_pass_3d[DRAW_PASS_3D_TRANSPARENT])
             mdl::DispManager::draw(rend_data_ctx, mdl::OBJ_TYPE_REFLECT_TRANSPARENT, cam);
 
-        static bool (*sub_1402C1AD0)() = (bool (*)())0x00000001402C1AD0;
-        if (sub_1402C1AD0() || render_manager.get_npr_param() == 1) {
+        static bool (*add_param_get_npr_mode)() = (bool (*)())0x00000001402C1AD0;
+        if (add_param_get_npr_mode() || render_manager.get_npr_param() == 1) {
             draw_npr_frame(rend_data_ctx);
 
             lighting_set(rend_data_ctx);
@@ -739,5 +739,5 @@ static bool draw_pass_reflect_get_obj_reflect_surface(mdl::ObjType type) {
 }
 
 static float_t reflection_quality_full_get() {
-    return (reflection_quality_get() - 0.5f) * 1.5f + 0.25f;
+    return (add_param_struct__get_reflection_quality() - 0.5f) * 1.5f + 0.25f;
 }
