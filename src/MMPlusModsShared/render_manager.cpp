@@ -238,43 +238,43 @@ namespace rndr {
                         }
                     }
 
-                    dof->apply(rend_data_ctx, dof_texture, rt.GetColorTex(), rt.GetDepthTex(),
+                    dof->apply(rend_data_ctx, dof_texture, rt.get_texture_glid(), rt.get_depth_texture_glid(),
                         cam.min_distance, cam.max_distance, cam.fov,
                         max_def(focus, cam.min_distance),
                         dof_debug_data.focal_length, dof_debug_data.f_number, width, height);
                 }
                 else
-                    dof->apply_f2(rend_data_ctx, dof_texture, rt.GetColorTex(), rt.GetDepthTex(),
+                    dof->apply_f2(rend_data_ctx, dof_texture, rt.get_texture_glid(), rt.get_depth_texture_glid(),
                         cam.min_distance, cam.max_distance, cam.fov,
                         dof_debug_data.f2.focus, dof_debug_data.f2.focus_range,
                         max_def(dof_debug_data.f2.fuzzing_range, 0.01f), dof_debug_data.f2.ratio, width, height);
 
-                rt.Bind(rend_data_ctx.state);
+                rt.begin_render(rend_data_ctx.state);
                 rend_data_ctx.state.set_blend_state(dx_default_states_get_blend_state(false,
                     DX_BLEND_SRC_ALPHA, DX_BLEND_INV_SRC_ALPHA,
                     DX_BLEND_SRC_ALPHA, DX_BLEND_INV_SRC_ALPHA, DX_BLEND_WRITE_MASK_RGBA));
                 render_ptr->draw_quad_copy(rend_data_ctx, 0, 0,
                     (int32_t)((float_t)render_width[0] * image_quality),
                     (int32_t)((float_t)render_height[0] * image_quality),
-                    dof_texture.GetColorTex(),
+                    dof_texture.get_texture_glid(),
                     (float_t)width / (float_t)render_width[0],
                     (float_t)height / (float_t)render_height[0], 0.0f, true);
             }
         }
         else if (dof_pv_data.enable && dof_pv_data.f2.ratio > 0.0f) {
-            dof->apply_f2(rend_data_ctx, dof_texture, rt.GetColorTex(), rt.GetDepthTex(),
+            dof->apply_f2(rend_data_ctx, dof_texture, rt.get_texture_glid(), rt.get_depth_texture_glid(),
                 cam.min_distance, cam.max_distance, cam.fov,
                 dof_pv_data.f2.focus, dof_pv_data.f2.focus_range,
                 max_def(dof_pv_data.f2.fuzzing_range, 0.01f), dof_pv_data.f2.ratio, width, height);
 
-            rt.Bind(rend_data_ctx.state);
+            rt.begin_render(rend_data_ctx.state);
             rend_data_ctx.state.set_blend_state(dx_default_states_get_blend_state(false,
                 DX_BLEND_SRC_ALPHA, DX_BLEND_INV_SRC_ALPHA,
                 DX_BLEND_SRC_ALPHA, DX_BLEND_INV_SRC_ALPHA, DX_BLEND_WRITE_MASK_RGBA));
             render_ptr->draw_quad_copy(rend_data_ctx, 0, 0,
                 (int32_t)((float_t)render_width[0] * image_quality),
                 (int32_t)((float_t)render_height[0] * image_quality),
-                dof_texture.GetColorTex(),
+                dof_texture.get_texture_glid(),
                 (float_t)width / (float_t)render_width[0],
                 (float_t)height / (float_t)render_height[0], 0.0f, true);
 
@@ -285,17 +285,23 @@ namespace rndr {
             enum_and(dof_debug_data.flags, ~DOF_DEBUG_ENABLE_DOF);
     }
 
-    void Render::bind_render_texture(p_dx_state& state, bool composite_back) {
+    // 0x1404A6E10
+    void Render::begin_render(p_dx_state& p_dx_st, bool composite_back) {
         if (composite_back) {
-            composite_back_texture.Bind(state);
-            state.set_viewport(0, 0, render_width[0], render_height[0]);
+            composite_back_texture.begin_render(p_dx_st);
+            p_dx_st.set_viewport(0, 0, render_width[0], render_height[0]);
         }
         else {
-            rend_texture->Bind(state);
-            state.set_viewport(0, 0,
+            rend_texture[0].begin_render(p_dx_st);
+            p_dx_st.set_viewport(0, 0,
                 app::get_value_scaled(render_width[0], render_ptr->image_quality),
                 app::get_value_scaled(render_height[0], render_ptr->image_quality));
         }
+    }
+
+    // 0x1404A5480
+    void Render::end_render(p_dx_state& p_dx_st) {
+        rend_texture[0].end_render(p_dx_st);
     }
 
     void Render::draw_npr_frame(render_data_context& rend_data_ctx) {

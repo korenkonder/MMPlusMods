@@ -21,34 +21,34 @@ reflect_full_struct::~reflect_full_struct() {
 }
 
 void reflect_full_struct::free() {
-    reflect_contour_texture.Free();
-    reflect_nonsss_texture.Free();
+    reflect_contour_texture.destroy();
+    reflect_nonsss_texture.destroy();
 
     if (reflect_nonsss_tex) {
         texture_release(reflect_nonsss_tex);
         reflect_nonsss_tex = 0;
     }
 
-    reflect_buffer_texture.Free();
-    reflect_texture.Free();
+    reflect_buffer_texture.destroy();
+    reflect_texture.destroy();
 }
 
 void reflect_full_struct::init() {
     rndr::Render* render = render_manager.render;
 
-    reflect_texture.Init(render->render_width[0], render->render_height[0], 0, 23, 27);
-    reflect_buffer_texture.Init(render->render_width[0], render->render_height[0], 0, 23, 27);
+    reflect_texture.create_texture(render->render_width[0], render->render_height[0], 0, 23, 27);
+    reflect_buffer_texture.create_texture(render->render_width[0], render->render_height[0], 0, 23, 27);
 
     reflect_nonsss_tex = texture_load_tex_2d(0x25000000 | render_get()->texture_counter++,
         23, render->render_width[0], render->render_height[0], 0, 0, 0, false);
 
     p_dx_texture* color_texs[2];
-    color_texs[0] = &reflect_texture.GetColorTex();
+    color_texs[0] = &reflect_texture.get_texture_glid();
     color_texs[1] = &reflect_nonsss_tex->tex;
-    reflect_nonsss_texture.SetColorDepthTextures(color_texs, 2, 0, reflect_texture.GetDepthTex());
+    reflect_nonsss_texture.attach_texture(color_texs, 2, 0, reflect_texture.get_depth_texture_glid());
 
     p_dx_texture empty_tex;
-    reflect_contour_texture.SetColorDepthTexture(reflect_texture.GetColorTex(), 0, empty_tex);
+    reflect_contour_texture.attach_texture(reflect_texture.get_texture_glid(), 0, empty_tex);
 }
 
 void get_reflect_mat() {

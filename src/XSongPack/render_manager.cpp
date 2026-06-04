@@ -85,7 +85,7 @@ void rndr__RenderManager__pass_ss_sss_mid_impl(render_data_context& rend_data_ct
 
             sss->apply_filter(rend_data_ctx);
 
-            rend->bind_render_texture(rend_data_ctx.state);
+            rend->begin_render(rend_data_ctx.state);
             float_t render_width;
             float_t render_height;
             rend->get_render_resolution(&render_width, &render_height, 0, 0);
@@ -153,43 +153,43 @@ HOOK(void, FASTCALL, rndr__Render__draw_npr_frame, 0x00000001404A52B0, rndr::Ren
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
         RenderTexture& refl_buf_tex = reflect_full_ptr->reflect_buffer_texture;
         if (!sub_1402C1D20()) {
-            refl_buf_tex.Bind(rend_data_ctx.state);
+            refl_buf_tex.begin_render(rend_data_ctx.state);
             rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);
             rend_data_ctx.state.clear_depth_stencil_view(0, 0.0f, false);
             This->render_ptr->draw_sss_contour(rend_data_ctx,
-                &refl_buf_tex.GetColorTex(), &refl_buf_tex.GetDepthTex(),
-                refl_tex.GetWidth(), refl_tex.GetHeight(),
-                &reflect_full_ptr->reflect_nonsss_tex->tex, &refl_tex.GetDepthTex(),
-                refl_tex.GetWidth(), refl_tex.GetHeight(), 1.0f, 1.0f, true, reflection_quality_full_get());
+                &refl_buf_tex.get_texture_glid(), &refl_buf_tex.get_depth_texture_glid(),
+                refl_tex.get_width(), refl_tex.get_height(),
+                &reflect_full_ptr->reflect_nonsss_tex->tex, &refl_tex.get_depth_texture_glid(),
+                refl_tex.get_width(), refl_tex.get_height(), 1.0f, 1.0f, true, reflection_quality_full_get());
         }
 
-        reflect_full_ptr->reflect_contour_texture.Bind(rend_data_ctx.state);
+        reflect_full_ptr->reflect_contour_texture.begin_render(rend_data_ctx.state);
         This->render_ptr->draw_npr_frame(rend_data_ctx,
             This->render_post_width_scale, This->render_post_height_scale,
-            &refl_buf_tex.GetColorTex(), &refl_buf_tex.GetDepthTex(),
-            &refl_tex.GetDepthTex(), reflection_quality_full_get());
-        refl_tex.Bind(rend_data_ctx.state);
+            &refl_buf_tex.get_texture_glid(), &refl_buf_tex.get_depth_texture_glid(),
+            &refl_tex.get_depth_texture_glid(), reflection_quality_full_get());
+        refl_tex.begin_render(rend_data_ctx.state);
     }
     else {
         if (!sub_1402C1D20()) {
-            This->sss_contour_texture->Bind(rend_data_ctx.state);
+            This->sss_contour_texture->begin_render(rend_data_ctx.state);
             rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);
             rend_data_ctx.state.clear_depth_stencil_view(0, 0.0f, false);
             This->render_ptr->draw_sss_contour(rend_data_ctx,
-                &This->sss_contour_texture->GetColorTex(), &This->sss_contour_texture->GetDepthTex(),
+                &This->sss_contour_texture->get_texture_glid(), &This->sss_contour_texture->get_depth_texture_glid(),
                 This->render_width[0], This->render_height[0],
-                &This->rend_nonsss_tex->tex, &This->rend_texture[0].GetDepthTex(),
+                &This->rend_nonsss_tex->tex, &This->rend_texture[0].get_depth_texture_glid(),
                 This->render_post_width[0], This->render_post_height[0],
                 This->render_post_width_scale,
                 This->render_post_height_scale, true, This->render_ptr->image_quality);
         }
 
-        This->contour_texture.Bind(rend_data_ctx.state);
+        This->contour_texture.begin_render(rend_data_ctx.state);
         This->render_ptr->draw_npr_frame(rend_data_ctx,
             This->render_post_width_scale, This->render_post_height_scale,
-            &This->sss_contour_texture->GetColorTex(), &This->sss_contour_texture->GetDepthTex(),
-            &This->rend_texture[0].GetDepthTex(), This->render_ptr->image_quality);
-        This->bind_render_texture(rend_data_ctx.state);
+            &This->sss_contour_texture->get_texture_glid(), &This->sss_contour_texture->get_depth_texture_glid(),
+            &This->rend_texture[0].get_depth_texture_glid(), This->render_ptr->image_quality);
+        This->begin_render(rend_data_ctx.state);
     }
 }
 
@@ -198,10 +198,10 @@ HOOK(void, FASTCALL, rndr__Render__begin_render_transparency, 0x00000001404A6EA0
     if (reflect_draw[rend_data_ctx.index] && reflect_full_ptr) {
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
         const float_t reflection_quality = reflection_quality_full_get();
-        int32_t width = (int32_t)((float_t)refl_tex.GetWidth() * reflection_quality);
-        int32_t height = (int32_t)((float_t)refl_tex.GetHeight() * reflection_quality);
+        int32_t width = (int32_t)((float_t)refl_tex.get_width() * reflection_quality);
+        int32_t height = (int32_t)((float_t)refl_tex.get_height() * reflection_quality);
         rend_data_ctx.state.copy_texture_region(&This->transparency->m_tex,
-            0, 0, &refl_tex.GetColorTex(), 0, 0, width, height);
+            0, 0, &refl_tex.get_texture_glid(), 0, 0, width, height);
         rend_data_ctx.state.set_render_target(&This->transparency->m_fbo);
         rend_data_ctx.state.set_viewport(0, 0, width, height);
     }
@@ -210,7 +210,7 @@ HOOK(void, FASTCALL, rndr__Render__begin_render_transparency, 0x00000001404A6EA0
         int32_t width = app::get_value_scaled(This->transparency->m_tex.get_width(), image_quality);
         int32_t height = app::get_value_scaled(This->transparency->m_tex.get_height(), image_quality);
         rend_data_ctx.state.copy_texture_region(&This->transparency->m_tex,
-            0, 0, &This->rend_texture[0].GetColorTex(), 0, 0, width, height);
+            0, 0, &This->rend_texture[0].get_texture_glid(), 0, 0, width, height);
         rend_data_ctx.state.set_render_target(&This->transparency->m_fbo);
         rend_data_ctx.state.set_viewport(0, 0, width, height);
     }
@@ -384,19 +384,19 @@ static void draw_pass_sss_contour(rndr::Render* rend, render_data_context& rend_
     if (reflect_draw[rend_data_ctx.index] && reflect_full_ptr) {
         RenderTexture& refl_tex = reflect_full_ptr->reflect_texture;
         RenderTexture& refl_buf_tex = reflect_full_ptr->reflect_buffer_texture;
-        refl_buf_tex.Bind(rend_data_ctx.state);
+        refl_buf_tex.begin_render(rend_data_ctx.state);
         rend->render_ptr->draw_sss_contour(rend_data_ctx,
-            &refl_tex.GetColorTex(), &refl_tex.GetDepthTex(),
-            refl_tex.GetWidth(), refl_tex.GetHeight(),
-            &refl_tex.GetColorTex(), &refl_tex.GetDepthTex(),
-            refl_tex.GetWidth(), refl_tex.GetHeight(), 1.0f, 1.0f, false, reflection_quality_full_get());
+            &refl_tex.get_texture_glid(), &refl_tex.get_depth_texture_glid(),
+            refl_tex.get_width(), refl_tex.get_height(),
+            &refl_tex.get_texture_glid(), &refl_tex.get_depth_texture_glid(),
+            refl_tex.get_width(), refl_tex.get_height(), 1.0f, 1.0f, false, reflection_quality_full_get());
     }
     else {
-        rend->sss_contour_texture->Bind(rend_data_ctx.state);
+        rend->sss_contour_texture->begin_render(rend_data_ctx.state);
         rend->render_ptr->draw_sss_contour(rend_data_ctx,
-            &rend->rend_texture[0].GetColorTex(), &rend->rend_texture[0].GetDepthTex(),
+            &rend->rend_texture[0].get_texture_glid(), &rend->rend_texture[0].get_depth_texture_glid(),
             rend->render_width[0], rend->render_height[0],
-            &rend->rend_texture[0].GetColorTex(), &rend->rend_texture[0].GetDepthTex(),
+            &rend->rend_texture[0].get_texture_glid(), &rend->rend_texture[0].get_depth_texture_glid(),
             rend->render_post_width[0], rend->render_post_height[0],
             rend->render_post_width_scale,
             rend->render_post_height_scale, false, rend->render_ptr->image_quality);
@@ -542,9 +542,9 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
     RenderTexture& refl_nonsss_tex = reflect_full_ptr->reflect_nonsss_texture;
 
     if (sub_1402C1D20())
-        refl_tex.Bind(rend_data_ctx.state);
+        refl_tex.begin_render(rend_data_ctx.state);
     else
-        refl_nonsss_tex.Bind(rend_data_ctx.state);
+        refl_nonsss_tex.begin_render(rend_data_ctx.state);
 
     if (!sub_1402C1D20())
         rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);
@@ -560,8 +560,8 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
 
         const float_t reflection_quality = reflection_quality_full_get();
         rend_data_ctx.state.set_viewport(0, 0,
-            (int32_t)((float_t)refl_tex.GetWidth() * reflection_quality),
-            (int32_t)((float_t)refl_tex.GetHeight() * reflection_quality));
+            (int32_t)((float_t)refl_tex.get_width() * reflection_quality),
+            (int32_t)((float_t)refl_tex.get_height() * reflection_quality));
 
         p_dx_texture* default_texture = dx_default_states_get_texture(1);
         rend_data_ctx.state.set_vs_textures(15, 1, default_texture);
@@ -680,18 +680,21 @@ static void draw_pass_reflect_full(render_data_context& rend_data_ctx, rndr::Ren
         for (int32_t i = render_manager.reflect_blur_num, j = 0; i > 0; i--, j++, index = 1 - index) {
             RenderTexture& src_tex = index ? refl_buf_tex : refl_tex;
             RenderTexture& dst_tex = index ? refl_tex : refl_buf_tex;
-            dst_tex.Bind(rend_data_ctx.state);
-            blur_filter_apply(rend_data_ctx, dst_tex.color_texture[0], 0, src_tex.color_texture[0], 0,
+            dst_tex.begin_render(rend_data_ctx.state);
+            blur_filter_apply(rend_data_ctx, dst_tex.get_texture(), 0, src_tex.get_texture(), 0,
                 render_manager.reflect_blur_filter, reflection_quality, 1.0f, 0.0f, reflection_quality);
         }
 
         if (index == 1) {
-            refl_tex.Bind(rend_data_ctx.state);
-            image_filter_scale(rend_data_ctx, refl_tex.color_texture[0], 0,
-                refl_buf_tex.color_texture[0], 0, 1.0f, reflection_quality);
+            refl_tex.begin_render(rend_data_ctx.state);
+            image_filter_scale(rend_data_ctx, refl_tex.get_texture(), 0,
+                refl_buf_tex.get_texture(), 0, 1.0f, reflection_quality);
         }
 
-        rend_data_ctx.reset_render_target(rend_data_ctx.state);
+        if (index == 1)
+            refl_tex.end_render(rend_data_ctx.state);
+        else
+            refl_buf_tex.end_render(rend_data_ctx.state);
     }
     else
         rend_data_ctx.state.clear_render_target_view(0.0f, 0.0f, 0.0f, 0.0f);

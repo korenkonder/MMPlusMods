@@ -90,11 +90,6 @@ int32_t render_data_context::get_uniform_value(UniformName name) {
     return uniform->arr[name];
 }
 
-void render_data_context::reset_render_target(p_dx_state& p_dx_st) {
-    p_dx_render_target rt;
-    p_dx_st.set_render_target(&rt);
-}
-
 void draw_state_struct::set_blend(render_data_context& rend_data_ctx, bool value) {
     rend_data[rend_data_ctx.index].blend = value;
 }

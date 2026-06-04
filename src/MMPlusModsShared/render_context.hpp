@@ -458,7 +458,6 @@ struct render_data_context {
     uniform_value* uniform;
 
     int32_t get_uniform_value(UniformName name);
-    void reset_render_target(p_dx_state& p_dx_st);
     void set_batch_alpha_threshold(float_t value);
     void set_batch_min_alpha(float_t value);
     void set_batch_sss_param(const vec4& value);

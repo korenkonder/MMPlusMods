@@ -323,7 +323,8 @@ namespace rndr {
         rndr::Render::FrameTexture frame_texture[6];
 
         void apply_dof(render_data_context& rend_data_ctx, const cam_data& cam, RenderTexture& rt, const float_t image_quality);
-        void bind_render_texture(p_dx_state& state, bool composite_back = false);
+        void begin_render(p_dx_state& p_dx_st, bool composite_back = false);
+        void end_render(p_dx_state& p_dx_st);
         void draw_npr_frame(render_data_context& rend_data_ctx);
         void get_render_resolution(float_t* render_width, float_t* render_height,
             float_t* render_post_width, float_t* render_post_height);

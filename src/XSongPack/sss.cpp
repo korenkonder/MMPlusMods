@@ -63,7 +63,7 @@ void sss_data::apply_filter(struct render_data_context& rend_data_ctx) {
 
     rend_data_ctx.set_batch_sss_param(reflect_draw[rend_data_ctx.index] ? sss_param_reflect : dx->sss_param);
     if (downsample) {
-        textures[0].Bind(rend_data_ctx.state);
+        textures[0].begin_render(rend_data_ctx.state);
 
         float_t render_width = 0.0f;
         float_t render_height = 0.0f;
@@ -76,22 +76,22 @@ void sss_data::apply_filter(struct render_data_context& rend_data_ctx) {
             : render_get()->rend_texture[0];
 
         rend_data_ctx.state.set_viewport(0, 0, 640, 360);
-        rend_data_ctx.state.set_ps_textures(0, 1, &rt.GetColorTex());
+        rend_data_ctx.state.set_ps_textures(0, 1, &rt.get_texture_glid());
         rend_data_ctx.state.set_ps_sampler_state(0, 1, &dx->sampler_state);
         rend_data_ctx.state.set_vs_shader(dx->shaders[0].vertex);
         rend_data_ctx.state.set_ps_shader(dx->shaders[0].pixel);
-        dx->draw_quad(rend_data_ctx, rt.GetWidth(), rt.GetHeight(),
+        dx->draw_quad(rend_data_ctx, rt.get_width(), rt.get_height(),
             render_width / render_post_width,
             render_height / render_post_height, 0.0f, 0.0f, 1.0f);
     }
 
-    textures[2].Bind(rend_data_ctx.state);
+    textures[2].begin_render(rend_data_ctx.state);
     rend_data_ctx.state.set_viewport(0, 0, 320, 180);
-    rend_data_ctx.state.set_ps_textures(0, 1, &textures[0].GetColorTex());
+    rend_data_ctx.state.set_ps_textures(0, 1, &textures[0].get_texture_glid());
     rend_data_ctx.state.set_ps_sampler_state(0, 1, &dx->sampler_state);
     rend_data_ctx.state.set_vs_shader(&dx->shaders[rend_data_ctx.get_uniform_value(U_NPR) == 1 ? 2 : 1].vertex);
     rend_data_ctx.state.set_ps_shader(&dx->shaders[rend_data_ctx.get_uniform_value(U_NPR) == 1 ? 2 : 1].pixel);
-    dx->draw_quad(rend_data_ctx, textures[0].GetWidth(), textures[0].GetHeight(), 1.0, 1.0, 0.0f, 0.0f, 1.0f);
+    dx->draw_quad(rend_data_ctx, textures[0].get_width(), textures[0].get_height(), 1.0, 1.0, 0.0f, 0.0f, 1.0f);
 
     const double_t weights[] = { 0.4, 0.3, 0.3 };
     const double_t r_radius[] = { 1.0, 2.0, 5.0 };
@@ -100,14 +100,14 @@ void sss_data::apply_filter(struct render_data_context& rend_data_ctx) {
     dx->calc_coef(rend_data_ctx, 0, 0, reflect_draw[rend_data_ctx.index]
         ? sss_inverse_scale_reflect : dx->inverse_scale, 0, weights, r_radius, g_radius, b_radius);
 
-    textures[reflect_draw[rend_data_ctx.index] ? 3 : 1].Bind(rend_data_ctx.state);
+    textures[reflect_draw[rend_data_ctx.index] ? 3 : 1].begin_render(rend_data_ctx.state);
     rend_data_ctx.state.set_viewport(0, 0, 320, 180);
-    rend_data_ctx.state.set_ps_textures(0, 1, &textures[2].GetColorTex());
+    rend_data_ctx.state.set_ps_textures(0, 1, &textures[2].get_texture_glid());
     rend_data_ctx.state.set_ps_sampler_state(0, 1, &dx->sampler_state);
     rend_data_ctx.state.set_vs_shader(&dx->shaders[3].vertex);
     rend_data_ctx.state.set_ps_shader(&dx->shaders[3].pixel);
     rend_data_ctx.state.set_ps_constant_buffer(1, 1, &dx->buffer_gaussian_coef);
-    dx->draw_quad(rend_data_ctx, textures[2].GetWidth(), textures[2].GetHeight(), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+    dx->draw_quad(rend_data_ctx, textures[2].get_width(), textures[2].get_height(), 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
 }
 
 // 0x1405BE2A0
@@ -129,7 +129,7 @@ bool sss_data::set(struct render_data_context& rend_data_ctx) {
     float_t render_height;
     rend->get_render_resolution(&render_width, &render_height, 0, 0);
     downsample = true;
-    rend->bind_render_texture(rend_data_ctx.state);
+    rend->begin_render(rend_data_ctx.state);
 
     rend_data_ctx.state.clear_render_target_view(param.x, param.y, param.z, 0.0f);
     rend_data_ctx.state.clear_depth_stencil_view(0x00, 0.0f, true);
@@ -146,10 +146,10 @@ bool sss_data::set(struct render_data_context& rend_data_ctx, RenderTexture& rt,
     }
 
     downsample = true;
-    rt.Bind(rend_data_ctx.state);
+    rt.begin_render(rend_data_ctx.state);
     rend_data_ctx.state.set_viewport(0, 0,
-        (int32_t)((float_t)rt.GetWidth() * quality),
-        (int32_t)((float_t)rt.GetHeight() * quality));
+        (int32_t)((float_t)rt.get_width() * quality),
+        (int32_t)((float_t)rt.get_height() * quality));
 
     rend_data_ctx.state.clear_render_target_view(param.x, param.y, param.z, 0.0f);
     rend_data_ctx.state.clear_depth_stencil_view(0x00, 0.0f, true);
@@ -158,7 +158,7 @@ bool sss_data::set(struct render_data_context& rend_data_ctx, RenderTexture& rt,
 
 // 0x1405BE630
 void sss_data::set_texture(struct render_data_context& rend_data_ctx, int32_t index) {
-    rend_data_ctx.state.set_ps_textures(16, 1, &textures[index].GetColorTex());
+    rend_data_ctx.state.set_ps_textures(16, 1, &textures[index].get_texture_glid());
     rend_data_ctx.state.set_ps_sampler_state(12, 1, &dx->sampler_state);
 }
 
