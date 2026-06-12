@@ -8,7 +8,7 @@
 #include "../KKdLib/default.hpp"
 #include "../KKdLib/mat.hpp"
 #include "../KKdLib/vec.hpp"
-#include "camera.hpp"
+#include "camera_render.hpp"
 #include "wrap.hpp"
 
 enum DxShaderName {

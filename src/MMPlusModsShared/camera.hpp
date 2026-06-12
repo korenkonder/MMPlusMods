@@ -9,94 +9,108 @@
 #include "../KKdLib/mat.hpp"
 #include "../KKdLib/vec.hpp"
 
-struct cam_data;
-
-struct frustum_corners {
-    vec3 data[8];
-
-    void get(cam_data& cam, float_t min_distance, float_t max_distance);
-};
-
-static_assert(sizeof(frustum_corners) == 0x60, "\"frustum_corners\" struct should have a size of 0x60");
-
-struct frustum_planes {
-    vec4 data[6];
-
-    void get(const frustum_corners& corners);
-};
-
-static_assert(sizeof(frustum_planes) == 0x60, "\"frustum_planes\" struct should have a size of 0x60");
-
-struct cam_data {
-    vec3 view_point;
-    vec3 interest;
-    vec3 up;
-    float_t fov;
-    float_t aspect;
-    float_t min_distance;
-    float_t max_distance;
-    vec4 view_mat[3];
-    mat4 proj_mat;
-    mat4 view_proj_mat;
-    vec2 persp_scale;
-    vec2 persp_offset;
-    frustum_planes frustum[2];
-
-    inline cam_data() : fov(), aspect(), min_distance(), max_distance(), frustum() {
-        static cam_data* (FASTCALL * cam_data__cam_data)(cam_data * This)
-            = (cam_data * (FASTCALL*)(cam_data * This))0x00000001404CCBC0;
-        cam_data__cam_data(this);
-    }
-
-    void get();
-    void get(float_t fov);
-};
-
-static_assert(sizeof(cam_data) == 0x1B4, "\"cam_data\" struct should have a size of 0x1B4");
-
-struct camera_struct {
-    vec3 view_point;
-    vec3 interest;
-    float_t roll;
-    float_t fov;
-    float_t aet_fov;
-    int32_t field_24;
+struct CameraData {
+    vec3 pos;
+    vec3 intr;
+    float_t rot_z;
+    float_t pers;
+    float_t pers_2d;
     double_t aspect;
-    float_t min_distance;
-    float_t max_distance;
-    vec4 projection_scale;
+    float_t clip_near;
+    float_t clip_far;
+    float_t frustrum_left_offset;
+    float_t frustrum_right_offset;
+    float_t frustrum_bottom_offset;
+    float_t frustrum_top_offset;
     bool use_up;
-    char field_49;
-    char field_4A;
-    char field_4B;
     vec3 up;
-    bool ignore_fov;
-    bool ignore_min_dist;
-    char field_5A;
-    char field_5B;
-    mat4 view;
-    mat4 inv_view;
-    mat4 projection;
-    mat4 view_projection;
-    mat4 view_projection_aet_2d;
-    mat4 view_projection_aet_3d;
-    float_t depth;
-    float_t aet_depth;
-    vec3 field_1E4;
-    vec3 field_1F0;
-    vec3 field_1FC;
-    vec3 field_208;
+    bool ignore_pers;
+    bool ignore_near_clip;
+    mat4 cmat;
+    mat4 imat;
+    mat4 pmat;
+    mat4 vpmat;
+    mat4 vpmat_2d;
+    mat4 vpmat_pre2d;
+    float_t fv;
+    float_t fv_2d;
+    vec3 fpn_left;
+    vec3 fpn_right;
+    vec3 fpn_bottom;
+    vec3 fpn_top;
     float_t distance;
-    vec3 rotation;
-    float_t fov_horizontal_rad;
-    char field_228;
-    bool fast_change;
-    bool fast_change_hist0;
-    bool fast_change_hist1;
-    int32_t field_22C;
+    vec3 rot;
+    float_t pers_tan;
+    bool portrait;
+    bool discontinuity;
+    bool discontinuity2;
+    bool discontinuity3;
 };
 
-static_assert(sizeof(camera_struct) == 0x230, "\"camera_struct\" struct should have a size of 0x230");
+static_assert(sizeof(CameraData) == 0x230, "\"CameraData\" struct should have a size of 0x230");
 
-extern frustum_planes& frustum_data;
-extern camera_struct& camera_data;
+struct CameraInfo {
+    CameraData data;
+    int32_t debug_flag;
+    bool debug_active;
+    CameraData debug_data;
+    CameraData debug_data_org;
+};
+
+static_assert(sizeof(CameraInfo) == 0x698, "\"CameraInfo\" struct should have a size of 0x698");
+
+extern CameraInfo& camera_info;
+
+extern void(FASTCALL* calc_camera_matrix)();
+extern void(FASTCALL* calc_frustum_plane_normal)(CameraData* data);
+extern vec3(FASTCALL* calc_screen_pos3d)(const vec3* pos);
+extern float_t(FASTCALL* calc_screen_pos_r)(vec3* sc_pos, const vec3* pos, float_t r, bool with_render_offset);
+extern bool(FASTCALL* check_camera_discontinuity_prev)();
+extern int32_t(FASTCALL* check_screen_pos_r)(const vec3* wpos, float_t wr);
+extern void(FASTCALL* ctrl_camera)();
+extern void(FASTCALL* dest_camera)();
+extern float_t(FASTCALL* get_camera_far_clip)();
+extern void(FASTCALL* get_camera_frustum_offset)(float_t* left_offset, float_t* right_offset, float_t* bottom_offset, float_t* top_offset);
+extern const vec3& (FASTCALL* get_camera_intr)();
+extern void(FASTCALL* get_camera_matrix)(mat4* cmat, mat4* pmat, mat4* vpmat);
+extern float_t(FASTCALL* get_camera_near_clip)();
+extern float_t(FASTCALL* get_camera_pers)();
+extern const vec3& (FASTCALL* get_camera_pos)();
+extern float_t(FASTCALL* get_camera_rot_y_deg)();
+extern float_t(FASTCALL* get_camera_rot_z)();
+extern void(FASTCALL* init_camera)();
+extern void(FASTCALL* init_projection_matrix)();
+extern void(FASTCALL* project_screen_r)(vec2* pos2d, const vec3* pos3d, float_t r, bool with_render_offset);
+extern void(FASTCALL* project_screen)(vec2* pos2d, const vec3* pos3d, bool with_render_offset);
+extern void(FASTCALL* set_camera_discontinuity2)();
+extern void(FASTCALL* set_camera_discontinuity)();
+extern void(FASTCALL* set_camera_frustum_offset)(float_t left_offset, float_t right_offset, float_t bottom_offset, float_t top_offset);
+extern void(FASTCALL* set_camera_intr)(const vec3* in_intr);
+extern void(FASTCALL* set_camera_near_clip)(float_t clip_near);
+extern void(FASTCALL* set_camera_pers)(float_t pers);
+extern void(FASTCALL* set_camera_pos)(const vec3* in_pos);
+extern void(FASTCALL* set_camera_rot_z)(float_t rot_z);
+extern void(FASTCALL* set_camera_up)(bool use_up, const vec3* in_up);
+extern void(FASTCALL* set_debug_camera_aspect)(double_t aspect);
+extern void(FASTCALL* set_debug_camera_distance)(float_t distance);
+extern void(FASTCALL* set_debug_camera_intr)(const vec3* in_intr);
+extern void(FASTCALL* set_debug_camera_near)(float_t in_clip_near);
+extern void(FASTCALL* set_debug_camera_pers)(float_t pers);
+extern void(FASTCALL* set_debug_camera_pos)(const vec3* in_pos);
+extern void(FASTCALL* set_debug_camera_rot)(const vec3* in_rot);
+extern void(FASTCALL* set_debug_camera_rot_z)(float_t rot);
+extern void(FASTCALL* set_ignore_near_clip_camera)(bool ignore_clip_near);
+extern void(FASTCALL* set_ignore_pers_camera)(bool ignore_pers);
+extern const mat4& (FASTCALL* set_projection_matrix_2d)(bool is_pre2d);
+
+extern vec2 calc_screen_pos2d(const vec3* pos, bool with_render_offset);
+extern bool check_camera_discontinuity();
+extern int32_t check_screen_pos(const vec3* wpos);
+extern double_t get_camera_aspect();
+extern float_t get_camera_fv_2d();
+extern void get_camera_imatrix(mat4* imat);
+extern const vec3& get_camera_up();
+extern bool get_ignore_near_clip();
+extern bool get_ignore_pers();
+extern void set_camera_aspect(double_t aspect);
+extern void set_camera_portrait(bool portrait);

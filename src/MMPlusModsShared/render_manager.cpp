@@ -58,12 +58,12 @@ namespace rndr {
         rend_data_ctx.state.set_ps_textures(10, 1, scene_depth_texture);
         rend_data_ctx.state.set_ps_sampler_state(10, 1, sampler_states);
 
-        const double_t min_distance = camera_data.min_distance;
-        const double_t max_distance = camera_data.max_distance;
+        const double_t near_clip = get_camera_near_clip();
+        const double_t far_clip = get_camera_far_clip();
         rend_data_ctx.state.write_buffer(buffers[7], vec4(
-            (float_t)(min_distance * (1.0 / (min_distance - max_distance))),
-            (float_t)(-(max_distance * min_distance) * (1.0 / (min_distance - max_distance))),
-            (float_t)min_distance, (float_t)max_distance
+            (float_t)(near_clip * (1.0 / (near_clip - far_clip))),
+            (float_t)(-(far_clip * near_clip) * (1.0 / (near_clip - far_clip))),
+            (float_t)near_clip, (float_t)far_clip
         ));
         rend_data_ctx.state.set_ps_constant_buffer(1, 1, &buffers[7]);
         rend_data_ctx.state.set_vs_shader(&shaders[48].vertex);

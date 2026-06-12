@@ -1183,7 +1183,7 @@ namespace mdl {
         mat4_mul(&_mat, &reflect_mat, &_mat);
         mat4_transpose(&_mat, &_mat);
 
-        bool camera_front = vec3::normalize(camera_data.view_point - camera_data.interest).z >= 0.0f;
+        bool camera_front = vec3::normalize(get_camera_pos() - get_camera_intr()).z >= 0.0f;
 
         for (int32_t i = 0; i < obj->num_mesh; i++) {
             const obj_mesh* mesh = &obj->mesh_array[i];
